@@ -39,3 +39,6 @@ next-env.d.ts
 # JetBrains IDE Specific
 /.idea
 *.iml
+
+# Sentry Config File
+.sentryclirc
