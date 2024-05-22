@@ -5,7 +5,7 @@ import {WalletRequest} from '@/lib/utils/types';
 export const createWallet = async () => {
   return turnkeyApiClient
     .createWallet({
-      walletName: 'testWallet12',
+      walletName: 'testWallet15',
       accounts: DEFAULT_ETHEREUM_ACCOUNTS,
     })
     .catch(error => {

@@ -4,7 +4,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import {useState} from 'react';
 import {createWallet} from '@/lib/_turnkey/wallet';
 import {createTransactionBase} from '@/lib/_turnkey/transaction';
-import Button from '@mui/material/Button';
 
 const toObject = (data: any) => {
   return JSON.parse(
@@ -14,6 +13,7 @@ const toObject = (data: any) => {
     ),
   );
 };
+
 export default function Home () {
   let buttonText = 'Send a Transaction';
   let loading = false;
@@ -40,9 +40,9 @@ export default function Home () {
           <p>
           {'Signer Data'}
           </p>
-          <p className="text-lg font-medium">
-            {JSON.stringify(data)}
-          </p>
+          <pre className="text-lg font-medium">
+            {JSON.stringify(data, null, 2)}
+          </pre>
           </div>
         <LoadingButton
           color="primary"

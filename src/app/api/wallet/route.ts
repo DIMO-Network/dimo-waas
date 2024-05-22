@@ -12,7 +12,5 @@ export async function POST (request: NextRequest) {
     return createTransactionBase(walletData)
   });
 
-
-
   return NextResponse.json(response);
 }
