@@ -1,6 +1,20 @@
 import {withSentryConfig} from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    turbo: {
+      resolveExtensions: [
+        '.mdx',
+        '.tsx',
+        '.ts',
+        '.jsx',
+        '.js',
+        '.mjs',
+        '.json',
+      ],
+    },
+  },
+};
 
 export default withSentryConfig(nextConfig, {
 // For all available options, see:
