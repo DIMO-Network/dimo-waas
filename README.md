@@ -72,7 +72,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 </details>
 
 **.env file**
-  - Currently, you will need to ask someone on the team for contents of the .env file
+  - Currently, you will need to ask someone on the team for contents of the .env.local file
     - TODO - set up an encrypted / secure location for this file and other sensitive project items
   - There is an example`.env.example` file in the root of the project.
 
@@ -86,9 +86,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ### Best Practices
 
 - #### **Adding to .env file**
-  - When adding a new key to the `.env` file, be sure to add it to the `.env.example` file as well.
+  - When adding a new key to the `.env.local` file, be sure to add it to the `.env.example` file as well.
   - The format for this is `ACTUAL_KEY_NAME_HERE="<KEY>"`
   - Copying one of the previous lines and changing the key name is the easiest way to do this.
+  - If the key you add needs to be used in a 'client' component, prepend `NEXT_PUBLIC_` to it.
+    - See: [NextJS Env Vars](https://nextjs.org/docs/app/building-your-application/configuring/environment-variables)
 
 - #### **Linting**
   - The project has eslint set up with the recommended rules.

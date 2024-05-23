@@ -15,7 +15,7 @@ export const createTransactionBase = (data: any) => {
   const provider = new ethers.JsonRpcProvider('https://polygon-pokt.nodies.app/');
   const turnkeySigner = new TurnkeySigner({
     client: turnkeyApiClient,
-    organizationId: process.env.TURNKEY_ORGANIZATION_ID || '9824a5dc-be8d-45c7-9009-90caddbb490c',
+    organizationId: process.env.NEXT_PUBLIC_TURNKEY_ORGANIZATION_ID || '',
     signWith: data.addresses[0],
   });
   return turnkeySigner.connect(provider).populateTransaction({
