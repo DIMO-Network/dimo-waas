@@ -48,6 +48,7 @@ db.serialize(() => {
           if (err) {
             return console.error(err.message);
           }
+          // @ts-ignore
           const id = this.lastID; // get the id of the last inserted row
           console.log(`Rows inserted, ID ${id}`);
         });
