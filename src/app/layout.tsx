@@ -4,6 +4,8 @@ import {Inter} from 'next/font/google';
 import './globals.css';
 import {AppRouterCacheProvider} from '@mui/material-nextjs/v13-appRouter';
 import {StyledEngineProvider} from '@mui/material';
+import {ThemeProvider} from '@mui/material/styles';
+import theme from '@/theme';
 
 const inter = Inter({subsets: ['latin']});
 
@@ -18,7 +20,9 @@ export default function RootLayout ({children}: Readonly<{children: React.ReactN
       <html lang="en">
         <body className={inter.className}>
           <AppRouterCacheProvider options={{enableCssLayer: true}}>
-            {children}
+            <ThemeProvider theme={theme}>
+              {children}
+            </ThemeProvider>
           </AppRouterCacheProvider>
         </body>
       </html>

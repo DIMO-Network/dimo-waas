@@ -1,14 +1,14 @@
-const sqlite3 = require("sqlite3").verbose();
+const sqlite3 = require('sqlite3').verbose();
 
 // Connecting to or creating a new SQLite database file
 const db = new sqlite3.Database(
-  "./collection.db",
+  './collection.db',
   sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
   (err: any) => {
     if (err) {
       return console.error(err.message);
     }
-    console.log("Connected to the SQlite database.");
+    console.log('Connected to the SQlite database.');
   }
 );
 
@@ -26,23 +26,23 @@ db.serialize(() => {
       if (err) {
         return console.error(err.message);
       }
-      console.log("Created items table.");
+      console.log('Created items table.');
 
       // Clear the existing data in the products table
-      db.run(`DELETE FROM items`, (err: any) => {
+      db.run('DELETE FROM items', (err: any) => {
         if (err) {
           return console.error(err.message);
         }
-        console.log("All rows deleted from items");
+        console.log('All rows deleted from items');
 
         // TODO: Seed values for local dev
         const values1 = [
-          "",
-          "",
+          '',
+          '',
         ];
 
 
-        const insertSql = `INSERT INTO items(name, description, img) VALUES(?, ?, ?)`;
+        const insertSql = 'INSERT INTO items(name, description, img) VALUES(?, ?, ?)';
 
         db.run(insertSql, values1, function (err: any) {
           if (err) {
@@ -57,7 +57,7 @@ db.serialize(() => {
           if (err) {
             return console.error(err.message);
           }
-          console.log("Closed the database connection.");
+          console.log('Closed the database connection.');
         });
       });
     }
