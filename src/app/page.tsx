@@ -96,11 +96,11 @@ export default function Home () {
         </LoadingButton>
       </div>
       <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}}/>
-      {/*  Create Turnkey Account with a Passcode Button Section */}
+      {/*  Create Turnkey Wallet with a Passcode Button Section */}
         <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left"/>
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
           <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
-            <p>{'Create Turnkey Account with Passcode'}</p>
+            <p>{'Create Turnkey Wallet with Passcode'}</p>
             <pre className="text-lg font-medium">
               {JSON.stringify(newAccountPasskeyData, null, 2)}
             </pre>
@@ -109,16 +109,16 @@ export default function Home () {
             color="primary"
             variant="contained"
             onClick={handlePasskeyOnClick}>
-            {'Create Turnkey Account with Passkey'}
+            {'Create Turnkey Wallet with Passkey'}
           </LoadingButton>
         </div>
         <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}}/>
         {/*TODO */}
-        {/*  Adding Passkey to Account Button Section */}
+        {/*  Adding Passkey to Existing Wallet Button Section */}
         <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left"/>
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
           <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
-            <p>{'Add Passkey to Existing Turnkey Account'}</p>
+            <p>{'Add Passkey to Existing Turnkey Wallet'}</p>
             <pre className="text-lg font-medium">
               {JSON.stringify(existingAccountPasskeyData, null, 2)}
             </pre>
@@ -128,7 +128,7 @@ export default function Home () {
             variant="contained"
             onClick={() => {}}
             disabled={true}>
-            {'Add Passkey to Existing Turnkey Account'}
+            {'Add Passkey to Existing Turnkey Wallet'}
           </LoadingButton>
         </div>
       <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}}/>
