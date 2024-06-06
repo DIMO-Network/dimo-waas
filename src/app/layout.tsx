@@ -18,7 +18,7 @@ export default function RootLayout ({children}: Readonly<{children: React.ReactN
   return (
     <StyledEngineProvider injectFirst>
       <html lang="en">
-        <body className={firaCode.className}>
+        <body className={firaCode.className} suppressHydrationWarning={true}>
           <AppRouterCacheProvider options={{enableCssLayer: true}}>
             <ThemeProvider theme={theme}>
               {children}
