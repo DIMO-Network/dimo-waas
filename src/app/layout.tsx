@@ -1,13 +1,13 @@
 import type {Metadata} from 'next';
 import React from 'react';
-import {Inter} from 'next/font/google';
+import {Fira_Code} from 'next/font/google';
 import './globals.css';
 import {AppRouterCacheProvider} from '@mui/material-nextjs/v13-appRouter';
 import {StyledEngineProvider} from '@mui/material';
 import {ThemeProvider} from '@mui/material/styles';
 import theme from '@/theme';
 
-const inter = Inter({subsets: ['latin']});
+const firaCode = Fira_Code({subsets: ['latin']});
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -18,7 +18,7 @@ export default function RootLayout ({children}: Readonly<{children: React.ReactN
   return (
     <StyledEngineProvider injectFirst>
       <html lang="en">
-        <body className={inter.className}>
+        <body className={firaCode.className}>
           <AppRouterCacheProvider options={{enableCssLayer: true}}>
             <ThemeProvider theme={theme}>
               {children}
