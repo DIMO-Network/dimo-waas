@@ -5,7 +5,10 @@ import Divider from '@mui/material/Divider';
 import {useState} from 'react';
 import {createWallet} from '@/lib/_turnkey/wallet';
 import {createTransactionBase} from '@/lib/_turnkey/transaction';
-import {addPasskeyToExistingWallet, createWalletWithPasskey} from '@/lib/_turnkey/passkeyWallet';
+import {
+  addPasskeyToExistingWallet,
+  createWalletWithPasskey,
+} from '@/lib/_turnkey/passkeyWallet';
 import {sendSponsoredWrite} from '@/lib/_zerodev/sendSponsoredWrite';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
 
@@ -18,12 +21,14 @@ const toObject = (data: any) => {
   );
 };
 
-export default function Home () {
+export default function Home() {
   const [accountData, setAccountData] = useState({});
   const [transactionData, setTransactionData] = useState({});
   const [writeData, setWriteData] = useState({});
   const [newAccountPasskeyData, setNewAccountPasskeyData] = useState({});
-  const [existingAccountPasskeyData, setExistingAccountPasskeyData] = useState({});
+  const [existingAccountPasskeyData, setExistingAccountPasskeyData] = useState(
+    {},
+  );
 
   const handleOnClickAccount = () => {
     createWallet().then(response => {
@@ -38,7 +43,7 @@ export default function Home () {
 
   const handleSponsoredWrite = async () => {
     try {
-      const resp = await sendSponsoredWrite();
+      const resp = await sendSponsoredWrite(accountData, transactionData);
       console.log({resp});
       setWriteData(resp.receipt.transactionHash);
     } catch (error) {
@@ -70,13 +75,18 @@ export default function Home () {
     const {encodedChallenge, attestation} =
       await turnkeyPasskeyClient?.createUserPasskey();
 
-    addPasskeyToExistingWallet({encodedChallenge, attestation, wallet: accountData.wallet}).catch(error => {
-      console.log(error);
-    }).then(response => {
-      console.log({response});
-      setExistingAccountPasskeyData(response);
-    });
-
+    addPasskeyToExistingWallet({
+      encodedChallenge,
+      attestation,
+      wallet: accountData.wallet,
+    })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(response => {
+        console.log({response});
+        setExistingAccountPasskeyData(response);
+      });
   };
 
   return (
