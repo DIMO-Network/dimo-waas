@@ -1,13 +1,23 @@
 import {DEFAULT_ETHEREUM_ACCOUNTS} from '@turnkey/sdk-server';
 import {turnkeyApiClient} from '@/lib/_turnkey/turnkeyClient';
-import {PasskeyWalletRequest, AddPasskeyToExistingWalletRequest} from '@/lib/utils/types';
+import {
+  PasskeyWalletRequest,
+  AddPasskeyToExistingWalletRequest,
+} from '@/lib/utils/types';
+import {computeAddress} from 'ethers';
 
-const createSubOrgParams = (challenge: any, attestation: any, walletId?: string) => {
+const createSubOrgParams = (
+  challenge: any,
+  attestation: any,
+  walletId?: string,
+) => {
   const walletName = 'Default wallet';
-  const wallet = walletId ? turnkeyApiClient.getWallets() : {
-    walletName: walletName,
-    accounts: DEFAULT_ETHEREUM_ACCOUNTS,
-  }
+  const wallet = walletId
+    ? turnkeyApiClient.getWallets()
+    : {
+        walletName: walletName,
+        accounts: DEFAULT_ETHEREUM_ACCOUNTS,
+      };
   return {
     subOrganizationName: 'user sub org 1',
     rootQuorumThreshold: 1,
@@ -28,10 +38,11 @@ const createSubOrgParams = (challenge: any, attestation: any, walletId?: string)
       walletName: walletName,
       accounts: DEFAULT_ETHEREUM_ACCOUNTS,
     },
-  }
-}
-export const createWalletWithPasskey: (data: PasskeyWalletRequest) => Promise<any> = async ({encodedChallenge: challenge, attestation}) => {
-  
+  };
+};
+export const createWalletWithPasskey: (
+  data: PasskeyWalletRequest,
+) => Promise<any> = async ({encodedChallenge: challenge, attestation}) => {
   // const subOrgParams = createSubOrgParams(challenge, attestation);
   const walletName = 'Default wallet';
   return turnkeyApiClient
@@ -53,7 +64,15 @@ export const createWalletWithPasskey: (data: PasskeyWalletRequest) => Promise<an
       ],
       wallet: {
         walletName: walletName,
-        accounts: DEFAULT_ETHEREUM_ACCOUNTS,
+        // accounts: DEFAULT_ETHEREUM_ACCOUNTS,
+        accounts: [
+          {
+            curve: 'CURVE_SECP256K1',
+            pathFormat: 'PATH_FORMAT_BIP32',
+            path: "m/44'/60'/0'/0/0",
+            addressFormat: 'ADDRESS_FORMAT_COMPRESSED',
+          },
+        ],
       },
     })
     .catch(error => {
@@ -62,11 +81,18 @@ export const createWalletWithPasskey: (data: PasskeyWalletRequest) => Promise<an
     })
     .then(response => {
       console.log('response from create sub org', response);
-      return response;
+      const pubKey = response.wallet?.addresses[0];
+      const address = computeAddress(`0x${pubKey}`);
+      const responseWithAddress = {...response};
+      responseWithAddress.wallet.walletAddress = address;
+      return responseWithAddress;
     });
 };
 
-export const addPasskeyToExistingWallet: (data: AddPasskeyToExistingWalletRequest) => Promise<any> = async ({encodedChallenge: challenge, attestation, wallet}) => {
-
-};
-
+export const addPasskeyToExistingWallet: (
+  data: AddPasskeyToExistingWalletRequest,
+) => Promise<any> = async ({
+  encodedChallenge: challenge,
+  attestation,
+  wallet,
+}) => {};

@@ -11,6 +11,8 @@ import {
 } from '@/lib/_turnkey/passkeyWallet';
 import {sendSponsoredWrite} from '@/lib/_zerodev/sendSponsoredWrite';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
+import ZerodevTransaction from './ZerodevTransaction';
+import ZerodevProvider from './ZerodevProvider';
 
 const toObject = (data: any) => {
   return JSON.parse(
@@ -75,6 +77,7 @@ export default function Home() {
     const {encodedChallenge, attestation} =
       await turnkeyPasskeyClient?.createUserPasskey();
 
+    console.log({attestation});
     addPasskeyToExistingWallet({
       encodedChallenge,
       attestation,
@@ -90,79 +93,83 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {/* Create Turnkey Account Button Section */}
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <div className="text-center pt-6 space-y-4 overflow-auto">
-          <p>{'Wallet Data'}</p>
-          <pre className="text-lg font-medium">
-            {JSON.stringify(accountData, null, 2)}
-          </pre>
-          <p>{'Signer Data'}</p>
-          <pre className="text-lg font-medium">
-            {JSON.stringify(transactionData, null, 2)}
-          </pre>
+    <ZerodevProvider>
+      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        {/* Create Turnkey Account Button Section */}
+        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+          <div className="text-center pt-6 space-y-4 overflow-auto">
+            <p>{'Wallet Data'}</p>
+            <pre className="text-lg font-medium">
+              {JSON.stringify(accountData, null, 2)}
+            </pre>
+            <p>{'Signer Data'}</p>
+            <pre className="text-lg font-medium">
+              {JSON.stringify(transactionData, null, 2)}
+            </pre>
+          </div>
+          <LoadingButton
+            color="primary"
+            variant="contained"
+            onClick={handleOnClickAccount}>
+            {'Create a Turnkey Account and Populate Transaction'}
+          </LoadingButton>
         </div>
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          onClick={handleOnClickAccount}>
-          {'Create a Turnkey Account and Populate Transaction'}
-        </LoadingButton>
-      </div>
-      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-      {/* AA sentUserOp TX Hash Button Section */}
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <div className="text-center pt-6 space-y-4 overflow-auto">
-          <p>{'AA sendUserOp tx hash'}</p>
-          <pre className="text-lg font-medium">
-            {JSON.stringify(writeData, null, 2)}
-          </pre>
+        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+        {/* AA sentUserOp TX Hash Button Section */}
+        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+          <div className="text-center pt-6 space-y-4 overflow-auto">
+            <p>{'AA sendUserOp tx hash'}</p>
+            <pre className="text-lg font-medium">
+              {JSON.stringify(writeData, null, 2)}
+            </pre>
+          </div>
+          <LoadingButton
+            color="primary"
+            variant="contained"
+            onClick={handleSponsoredWrite}>
+            Send example sponsored tx
+          </LoadingButton>
         </div>
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          onClick={handleSponsoredWrite}>
-          Send example sponsored tx
-        </LoadingButton>
-      </div>
-      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-      {/*  Create Turnkey Wallet with a Passcode Button Section */}
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
-          <p>{'Create Turnkey Wallet with Passcode'}</p>
-          <pre className="text-lg font-medium">
-            {JSON.stringify(newAccountPasskeyData, null, 2)}
-          </pre>
+        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+        {/*  Create Turnkey Wallet with a Passcode Button Section */}
+        <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
+        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+          <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
+            <p>{'Create Turnkey Wallet with Passcode'}</p>
+            <pre className="text-lg font-medium">
+              {JSON.stringify(newAccountPasskeyData, null, 2)}
+            </pre>
+          </div>
+          <LoadingButton
+            color="primary"
+            variant="contained"
+            onClick={handlePasskeyOnClick}>
+            {'Create Turnkey Wallet with Passkey'}
+          </LoadingButton>
         </div>
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          onClick={handlePasskeyOnClick}>
-          {'Create Turnkey Wallet with Passkey'}
-        </LoadingButton>
-      </div>
-      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-      {/* TODO */}
-      {/*  Adding Passkey to Existing Wallet Button Section */}
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
-          <p>{'Add Passkey to Existing Turnkey Wallet'}</p>
-          <pre className="text-lg font-medium">
-            {JSON.stringify(existingAccountPasskeyData, null, 2)}
-          </pre>
+        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+        {/* TODO */}
+        {/*  Adding Passkey to Existing Wallet Button Section */}
+        <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
+        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+          <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
+            <p>{'Add Passkey to Existing Turnkey Wallet'}</p>
+            <pre className="text-lg font-medium">
+              {JSON.stringify(existingAccountPasskeyData, null, 2)}
+            </pre>
+          </div>
+          <LoadingButton
+            color="primary"
+            variant="contained"
+            onClick={handleAddPasskeyOnClick}
+            disabled={true}>
+            {'Add Passkey to Existing Turnkey Wallet'}
+          </LoadingButton>
         </div>
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          onClick={handleAddPasskeyOnClick}
-          disabled={true}>
-          {'Add Passkey to Existing Turnkey Wallet'}
-        </LoadingButton>
-      </div>
-      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-    </main>
+        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+        <ZerodevTransaction />
+        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+      </main>
+    </ZerodevProvider>
   );
 }
