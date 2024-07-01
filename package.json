@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@alchemy/aa-core": "^3.6.1",
+    "@alchemy/aa-signers": "^3.6.1",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -28,7 +30,7 @@
     "@zerodev/sdk": "^5.3.4",
     "@zerodev/waas": "^0.2.2",
     "ethers": "^6.12.1",
-    "next": "14.2.3",
+    "next": "^14.2.4",
     "permissionless": "^0.1.30",
     "react": "^18",
     "react-dom": "^18",

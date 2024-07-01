@@ -1,11 +1,15 @@
 import {DEFAULT_ETHEREUM_ACCOUNTS} from '@turnkey/sdk-server';
 import {turnkeyApiClient} from '@/lib/_turnkey/turnkeyClient';
-import {WalletRequest} from '@/lib/utils/types';
 
-export const createWallet: () => Promise<any> = async () => {
+const dropActivityFromResponse = (response: any) => {
+  const {activity, ...rest} = response;
+  return rest;
+}
+
+export const createWallet = async () => {
   return turnkeyApiClient
     .createWallet({
-      walletName: 'testWallet58',
+      walletName: 'testWallet28',
       accounts: DEFAULT_ETHEREUM_ACCOUNTS,
     })
     .catch(error => {
@@ -14,7 +18,8 @@ export const createWallet: () => Promise<any> = async () => {
     })
     .then(response => {
       console.log('response from create wallet', response);
-      return response;
+
+      return dropActivityFromResponse(response);
     });
 };
 

@@ -4,7 +4,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Divider from '@mui/material/Divider';
 import {useState} from 'react';
 import {createWallet} from '@/lib/_turnkey/wallet';
-import {createTransactionBase} from '@/lib/_turnkey/transaction';
+import {createTransactionChannel} from '@/lib/_turnkey/transaction';
 import {
   addPasskeyToExistingWallet,
   createWalletWithPasskey,
@@ -24,8 +24,8 @@ const toObject = (data: any) => {
   );
 };
 
-export default function Home() {
-  const [accountData, setAccountData] = useState({});
+export default function Home () {
+  const [walletData, setWalletData] = useState({});
   const [transactionData, setTransactionData] = useState({});
   const [writeData, setWriteData] = useState({});
   const [newAccountPasskeyData, setNewAccountPasskeyData] = useState({});
@@ -33,11 +33,17 @@ export default function Home() {
     {},
   );
 
+  const transactionParams = {
+    to: '0x9916caf06747F8a5458CE69c4A071555903F7b62',
+    value: '0',
+  };
+
   const handleOnClickAccount = () => {
     createWallet().then(response => {
       console.log('response from create wallet', response);
-      setAccountData(toObject(response));
-      createTransactionBase(response).then(response => {
+      setWalletData(toObject(response));
+
+      createTransactionChannel(response, transactionParams).then(response => {
         console.log('transactData::: ', response);
         setTransactionData(toObject(response));
       });
@@ -45,13 +51,16 @@ export default function Home() {
   };
 
   const handleSponsoredWrite = async () => {
-    try {
-      const resp = await sendSponsoredWrite(accountData, transactionData);
-      console.log({resp});
-      setWriteData(resp.receipt.transactionHash);
-    } catch (error) {
-      console.log(error);
-    }
+    sendSponsoredWrite(walletData, transactionData)
+      .catch(error => {
+        console.log(error);
+      })
+      .then(resp => {
+        console.log({resp});
+        if (resp) {
+          setWriteData(resp.receipt.transactionHash);
+        }
+      });
   };
 
   const handleTransactionChannel = async () => {
@@ -81,18 +90,17 @@ export default function Home() {
   };
 
   const handleAddPasskeyOnClick = async () => {
-    if (accountData?.wallet) {
+    if (walletData?.walletId) {
       throw Error('No wallet data, create wallet first');
     }
 
     const {encodedChallenge, attestation} =
       await turnkeyPasskeyClient?.createUserPasskey();
 
-    console.log({attestation});
     addPasskeyToExistingWallet({
       encodedChallenge,
       attestation,
-      wallet: accountData.wallet,
+      wallet: walletData,
     })
       .catch(error => {
         console.log(error);
@@ -111,9 +119,9 @@ export default function Home() {
           <div className="text-center pt-6 space-y-4 overflow-auto">
             <p>{'Wallet Data'}</p>
             <pre className="text-lg font-medium">
-              {JSON.stringify(accountData, null, 2)}
+              {JSON.stringify(walletData, null, 2)}
             </pre>
-            <p>{'Signer Data'}</p>
+            <p>{'Populated Transaction Data'}</p>
             <pre className="text-lg font-medium">
               {JSON.stringify(transactionData, null, 2)}
             </pre>

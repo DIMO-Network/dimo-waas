@@ -81,6 +81,17 @@ export const createWalletWithPasskey: (
     })
     .then(response => {
       console.log('response from create sub org', response);
+      /*
+      turnkey response:
+      {
+        subOrganizationId: string
+        wallet?: {
+          walletId: string
+          addresses: string[]
+          } | undefined
+        rootUserIds?: string[] | undefined
+      }
+      */
       const pubKey = response.wallet?.addresses[0];
       const address = computeAddress(`0x${pubKey}`);
       const responseWithAddress = {...response};

@@ -8,6 +8,11 @@ export interface WalletRequest {
   walletAddresses?: string[];
 }
 
+export interface WalletResponse {
+  walletId: string;
+  addresses: string[];
+}
+
 export interface TransactionRequest extends WalletRequest {
   walletAddresses: string[];
   serviceProvider: ServiceProvider;
@@ -34,6 +39,11 @@ export interface PasskeyWalletRequest {
     transports: ('AUTHENTICATOR_TRANSPORT_BLE' | 'AUTHENTICATOR_TRANSPORT_INTERNAL' | 'AUTHENTICATOR_TRANSPORT_NFC' | 'AUTHENTICATOR_TRANSPORT_USB' | 'AUTHENTICATOR_TRANSPORT_HYBRID')[]
   }
 }
+
+// export interface PasskeyWalletResponse {
+//   walletId: string;
+//   addresses: string[];
+// }
 
 export interface AddPasskeyToExistingWalletRequest extends PasskeyWalletRequest {
   wallet: object;
