@@ -59,7 +59,7 @@ export const sendSponsoredWrite = async (
       },
     },
   });
-  console.log({kernelClient});
+
   const userOpHash = await kernelClient.sendUserOperation({
     userOperation: {
       callData: await account.encodeCallData({

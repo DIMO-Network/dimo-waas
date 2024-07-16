@@ -42,5 +42,5 @@ export const getZerodevSigner = async (account: any) => {
     entryPoint: ENTRYPOINT_ADDRESS_V07,
   });
 
-  return ecdsaValidator;
+  return {ecdsaValidator, smartAccountSigner};
 };

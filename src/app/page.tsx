@@ -13,6 +13,7 @@ import {sendSponsoredWrite} from '@/lib/_zerodev/sendSponsoredWrite';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
 import ZerodevTransaction from './ZerodevTransaction';
 import ZerodevProvider from './ZerodevProvider';
+import {getSessionKey} from '@/lib/_zerodev/getSessionKey';
 
 const toObject = (data: any) => {
   return JSON.parse(
@@ -51,6 +52,15 @@ export default function Home() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleTransactionChannel = async () => {
+    const sessionKeyProvider = await getSessionKey(
+      '0x9916caf06747F8a5458CE69c4A071555903F7b62',
+      accountData,
+      0,
+    );
+    console.log({sessionKeyProvider});
   };
 
   const handlePasskeyOnClick = async () => {
@@ -170,6 +180,23 @@ export default function Home() {
         <ZerodevTransaction />
         <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
       </main>
+      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+      {/* AA sentUserOp TX Hash Button Section */}
+      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+        {/* <div className="text-center pt-6 space-y-4 overflow-auto">
+            <p>{'AA sendUserOp tx hash'}</p>
+            <pre className="text-lg font-medium">
+              {JSON.stringify(writeData, null, 2)}
+            </pre>
+          </div> */}
+        <LoadingButton
+          color="primary"
+          variant="contained"
+          onClick={handleTransactionChannel}>
+          Get tx channel
+        </LoadingButton>
+      </div>
+      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
     </ZerodevProvider>
   );
 }
