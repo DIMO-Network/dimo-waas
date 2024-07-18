@@ -55,11 +55,12 @@ export default function Home() {
   };
 
   const handleTransactionChannel = async () => {
-    const sessionKeyProvider = await getSessionKey(
-      '0x9916caf06747F8a5458CE69c4A071555903F7b62',
-      accountData,
-      0,
-    );
+    // const sessionKeyProvider = await getSessionKey(
+    //   '0x9916caf06747F8a5458CE69c4A071555903F7b62',
+    //   accountData,
+    //   0,
+    // );
+    const sessionKeyProvider = await getSessionKey(accountData);
     console.log({sessionKeyProvider});
   };
 

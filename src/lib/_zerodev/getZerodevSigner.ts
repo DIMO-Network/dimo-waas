@@ -8,6 +8,7 @@ import {
 import {http, createWalletClient, createPublicClient} from 'viem';
 import {TurnkeyClient} from '@turnkey/http';
 import {createAccount} from '@turnkey/viem';
+import {KERNEL_V3_1} from '@zerodev/sdk/constants';
 
 export const getZerodevSigner = async (account: any) => {
   // Initialize a Turnkey Signer
@@ -40,6 +41,7 @@ export const getZerodevSigner = async (account: any) => {
   const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
     signer: smartAccountSigner,
     entryPoint: ENTRYPOINT_ADDRESS_V07,
+    kernelVersion: KERNEL_V3_1,
   });
 
   return {ecdsaValidator, smartAccountSigner};
