@@ -9,11 +9,7 @@ import {
   addPasskeyToExistingWallet,
   createWalletWithPasskey,
 } from '@/lib/_turnkey/passkeyWallet';
-import {sendSponsoredWrite} from '@/lib/_zerodev/sendSponsoredWrite';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
-import ZerodevTransaction from './ZerodevTransaction';
-import ZerodevProvider from './ZerodevProvider';
-import {getSessionKey} from '@/lib/_zerodev/getSessionKey';
 
 const toObject = (data: any) => {
   return JSON.parse(
@@ -27,7 +23,6 @@ const toObject = (data: any) => {
 export default function Home () {
   const [walletData, setWalletData] = useState({});
   const [transactionData, setTransactionData] = useState({});
-  const [writeData, setWriteData] = useState({});
   const [newAccountPasskeyData, setNewAccountPasskeyData] = useState({});
   const [existingAccountPasskeyData, setExistingAccountPasskeyData] = useState(
     {},
@@ -48,29 +43,6 @@ export default function Home () {
         setTransactionData(toObject(response));
       });
     });
-  };
-
-  const handleSponsoredWrite = async () => {
-    sendSponsoredWrite(walletData, transactionData)
-      .catch(error => {
-        console.log(error);
-      })
-      .then(resp => {
-        console.log({resp});
-        if (resp) {
-          setWriteData(resp.receipt.transactionHash);
-        }
-      });
-  };
-
-  const handleTransactionChannel = async () => {
-    // const sessionKeyProvider = await getSessionKey(
-    //   '0x9916caf06747F8a5458CE69c4A071555903F7b62',
-    //   accountData,
-    //   0,
-    // );
-    const sessionKeyProvider = await getSessionKey(accountData);
-    console.log({sessionKeyProvider});
   };
 
   const handlePasskeyOnClick = async () => {
@@ -112,7 +84,6 @@ export default function Home () {
   };
 
   return (
-    <ZerodevProvider>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         {/* Create Turnkey Account Button Section */}
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -131,22 +102,6 @@ export default function Home () {
             variant="contained"
             onClick={handleOnClickAccount}>
             {'Create a Turnkey Account and Populate Transaction'}
-          </LoadingButton>
-        </div>
-        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-        {/* AA sentUserOp TX Hash Button Section */}
-        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-          <div className="text-center pt-6 space-y-4 overflow-auto">
-            <p>{'AA sendUserOp tx hash'}</p>
-            <pre className="text-lg font-medium">
-              {JSON.stringify(writeData, null, 2)}
-            </pre>
-          </div>
-          <LoadingButton
-            color="primary"
-            variant="contained"
-            onClick={handleSponsoredWrite}>
-            Send example sponsored tx
           </LoadingButton>
         </div>
         <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
@@ -186,26 +141,6 @@ export default function Home () {
           </LoadingButton>
         </div>
         <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-        <ZerodevTransaction />
-        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
       </main>
-      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-      {/* AA sentUserOp TX Hash Button Section */}
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        {/* <div className="text-center pt-6 space-y-4 overflow-auto">
-            <p>{'AA sendUserOp tx hash'}</p>
-            <pre className="text-lg font-medium">
-              {JSON.stringify(writeData, null, 2)}
-            </pre>
-          </div> */}
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          onClick={handleTransactionChannel}>
-          Get tx channel
-        </LoadingButton>
-      </div>
-      <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-    </ZerodevProvider>
   );
 }

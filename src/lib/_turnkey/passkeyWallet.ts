@@ -40,6 +40,7 @@ const createSubOrgParams = (
     },
   };
 };
+
 export const createWalletWithPasskey: (
   data: PasskeyWalletRequest,
 ) => Promise<any> = async ({encodedChallenge: challenge, attestation}) => {
@@ -60,6 +61,7 @@ export const createWalletWithPasskey: (
               attestation: attestation,
             },
           ],
+          oauthProviders: [],
         },
       ],
       wallet: {
