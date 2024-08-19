@@ -1,7 +1,5 @@
 'use client';
 
-import LoadingButton from '@mui/lab/LoadingButton';
-import Divider from '@mui/material/Divider';
 import {useState} from 'react';
 import {createWallet} from '@/lib/_turnkey/wallet';
 import {createTransactionChannel} from '@/lib/_turnkey/transaction';
@@ -10,6 +8,7 @@ import {
   createWalletWithPasskey,
 } from '@/lib/_turnkey/passkeyWallet';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
+import {Divider} from '@chakra-ui/layout';
 
 const toObject = (data: any) => {
   return JSON.parse(
@@ -97,14 +96,13 @@ export default function Home () {
               {JSON.stringify(transactionData, null, 2)}
             </pre>
           </div>
-          <LoadingButton
+          <button
             color="primary"
-            variant="contained"
             onClick={handleOnClickAccount}>
             {'Create a Turnkey Account and Populate Transaction'}
-          </LoadingButton>
+          </button>
         </div>
-        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+        <Divider color="gray" sx={{marginTop: 5, marginBottom: 5}} />
         {/*  Create Turnkey Wallet with a Passcode Button Section */}
         <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -114,14 +112,13 @@ export default function Home () {
               {JSON.stringify(newAccountPasskeyData, null, 2)}
             </pre>
           </div>
-          <LoadingButton
+          <button
             color="primary"
-            variant="contained"
             onClick={handlePasskeyOnClick}>
             {'Create Turnkey Wallet with Passkey'}
-          </LoadingButton>
+          </button>
         </div>
-        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+        <Divider color="gray" sx={{marginTop: 5, marginBottom: 5}} />
         {/* TODO */}
         {/*  Adding Passkey to Existing Wallet Button Section */}
         <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
@@ -132,15 +129,14 @@ export default function Home () {
               {JSON.stringify(existingAccountPasskeyData, null, 2)}
             </pre>
           </div>
-          <LoadingButton
+          <button
             color="primary"
-            variant="contained"
             onClick={handleAddPasskeyOnClick}
             disabled={true}>
             {'Add Passkey to Existing Turnkey Wallet'}
-          </LoadingButton>
+          </button>
         </div>
-        <Divider flexItem color="gray" sx={{marginTop: 5, marginBottom: 5}} />
+        <Divider color="gray" sx={{marginTop: 5, marginBottom: 5}} />
       </main>
   );
 }

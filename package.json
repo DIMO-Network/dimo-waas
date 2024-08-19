@@ -15,10 +15,6 @@
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
-    "@mui/lab": "^5.0.0-alpha.173",
-    "@mui/material": "^5.16.7",
-    "@mui/material-nextjs": "^5.16.6",
-    "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@sentry/nextjs": "^8.25.0",
     "@tanstack/react-query": "^5.51.23",
     "@turnkey/ethers": "^1.0.15",
@@ -28,6 +24,7 @@
     "@turnkey/viem": "^0.4.25",
     "ethers": "^6.13.2",
     "next": "^14.2.5",
+    "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
     "styled-components": "^6.1.12"
