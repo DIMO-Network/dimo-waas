@@ -1,5 +1,5 @@
 'use client';
-
+// TODO Remove all of this stuff eventually, this is all POC around turnkey functionality
 import {useState} from 'react';
 import {createWallet} from '@/lib/_turnkey/wallet';
 import {createTransactionChannel} from '@/lib/_turnkey/transaction';
@@ -8,7 +8,6 @@ import {
   createWalletWithPasskey,
 } from '@/lib/_turnkey/passkeyWallet';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
-import {Divider} from '@chakra-ui/layout';
 
 const toObject = (data: any) => {
   return JSON.parse(
@@ -19,7 +18,7 @@ const toObject = (data: any) => {
   );
 };
 
-export default function Home () {
+export default function Home() {
   const [walletData, setWalletData] = useState({});
   const [transactionData, setTransactionData] = useState({});
   const [newAccountPasskeyData, setNewAccountPasskeyData] = useState({});
@@ -83,60 +82,63 @@ export default function Home () {
   };
 
   return (
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        {/* Create Turnkey Account Button Section */}
-        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-          <div className="text-center pt-6 space-y-4 overflow-auto">
-            <p>{'Wallet Data'}</p>
-            <pre className="text-lg font-medium">
-              {JSON.stringify(walletData, null, 2)}
-            </pre>
-            <p>{'Populated Transaction Data'}</p>
-            <pre className="text-lg font-medium">
-              {JSON.stringify(transactionData, null, 2)}
-            </pre>
-          </div>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      {/* Create Turnkey Account Button Section */}
+      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+        <div className="text-center pt-6 space-y-4 overflow-auto center">
+          <p>{'Wallet Data'}</p>
+          <pre className="text-lg font-medium">
+            {JSON.stringify(walletData, null, 2)}
+          </pre>
+          <p>{'Populated Transaction Data'}</p>
+          <pre className="text-lg font-medium">
+            {JSON.stringify(transactionData, null, 2)}
+          </pre>
+        </div>
+        <div className={'flex flex-col items-center'}>
           <button
-            color="primary"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
             onClick={handleOnClickAccount}>
             {'Create a Turnkey Account and Populate Transaction'}
           </button>
         </div>
-        <Divider color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-        {/*  Create Turnkey Wallet with a Passcode Button Section */}
-        <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
-        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-          <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
-            <p>{'Create Turnkey Wallet with Passcode'}</p>
-            <pre className="text-lg font-medium">
-              {JSON.stringify(newAccountPasskeyData, null, 2)}
-            </pre>
-          </div>
+      </div>
+      {/*  Create Turnkey Wallet with a Passcode Button Section */}
+      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
+      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+        <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
+          <p>{'Create Turnkey Wallet with Passcode'}</p>
+          <pre className="text-lg font-medium">
+            {JSON.stringify(newAccountPasskeyData, null, 2)}
+          </pre>
+        </div>
+        <div className={'flex flex-col items-center'}>
           <button
-            color="primary"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
             onClick={handlePasskeyOnClick}>
             {'Create Turnkey Wallet with Passkey'}
           </button>
         </div>
-        <Divider color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-        {/* TODO */}
-        {/*  Adding Passkey to Existing Wallet Button Section */}
-        <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
-        <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-          <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
-            <p>{'Add Passkey to Existing Turnkey Wallet'}</p>
-            <pre className="text-lg font-medium">
-              {JSON.stringify(existingAccountPasskeyData, null, 2)}
-            </pre>
-          </div>
+      </div>
+      {/* TODO */}
+      {/*  Adding Passkey to Existing Wallet Button Section */}
+      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left" />
+      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+        <div className="text-center pt-6 pb-6 space-y-4 overflow-auto">
+          <p>{'Add Passkey to Existing Turnkey Wallet'}</p>
+          <pre className="text-lg font-medium">
+            {JSON.stringify(existingAccountPasskeyData, null, 2)}
+          </pre>
+        </div>
+        <div className={'flex flex-col items-center'}>
           <button
-            color="primary"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
             onClick={handleAddPasskeyOnClick}
             disabled={true}>
             {'Add Passkey to Existing Turnkey Wallet'}
           </button>
         </div>
-        <Divider color="gray" sx={{marginTop: 5, marginBottom: 5}} />
-      </main>
+      </div>
+    </main>
   );
 }

@@ -1,4 +1,5 @@
 import {withSentryConfig} from '@sentry/nextjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
@@ -22,8 +23,8 @@ export default withSentryConfig(nextConfig, {
 
 // Suppresses source map uploading logs during build
 silent: true,
-org: "dimo-hp",
-project: "", //TODO create project and add here
+org: '',
+project: '', //TODO create project and add here
 }, {
 // For all available options, see:
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
@@ -38,7 +39,7 @@ transpileClientSDK: true,
 // This can increase your server load as well as your hosting bill.
 // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
 // side errors will fail.
-tunnelRoute: "/monitoring",
+tunnelRoute: '/monitoring',
 
 // Hides source maps from generated client bundles
 hideSourceMaps: true,
