@@ -31,6 +31,7 @@ export interface TransactionTemplateData {
 }
 
 export interface PasskeyWalletRequest {
+  email: string;
   encodedChallenge: string;
   attestation: {
     credentialId: string

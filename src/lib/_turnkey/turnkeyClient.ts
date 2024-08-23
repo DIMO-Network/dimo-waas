@@ -2,6 +2,7 @@ import {Turnkey} from '@turnkey/sdk-server';
 import {Turnkey as PasskeyClient} from '@turnkey/sdk-browser';
 import {IframeStamper} from '@turnkey/iframe-stamper';
 import {TurnkeyClient} from '@turnkey/http';
+import {WebauthnStamper} from "@turnkey/webauthn-stamper";
 
 // TODO do we really need multiple turnkey clients for all of the functionality we want??? - probably but double check
 
@@ -30,10 +31,23 @@ const turnkeyBrowser = new PasskeyClient({
 //   {baseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!},
 //   iframeStamper,
 // );
+
+const stamper = new WebauthnStamper({
+  // TODO Update this to programmatically use an env var based on environment
+  rpId: 'localhost',
+});
+
+const turnkeyClient = new TurnkeyClient({
+  baseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
+}, stamper);
+
 export const turnkeyProviderConfig = {
   apiBaseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
-  serverSignUrl: process.env.ZERODEV_PASSKEY_SERVER_URL,
+  serverSignUrl: process.env.NEXT_ZERODEV_PASSKEY_SERVER_URL,
   defaultOrganizationId: process.env.NEXT_PUBLIC_TURNKEY_ORGANIZATION_ID!,
+  rpId: 'localhost',
 };
+
+export const turnkeyClientWithStamper = turnkeyClient;
 export const turnkeyApiClient = turnkeyApi.apiClient();
 export const turnkeyPasskeyClient = turnkeyBrowser.passkeyClient();
