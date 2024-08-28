@@ -15,12 +15,15 @@ interface EmailAuthProps {
 const TurnkeyIframeContainerId = 'turnkey-auth-iframe-container-id';
 const TurnkeyIframeElementId = 'turnkey-auth-iframe-element-id';
 
-export async function checkIsValid (iframeStamper: IframeStamper, organizationId: string) {
+export async function checkIsValid(
+  iframeStamper: IframeStamper,
+  organizationId: string,
+) {
   const client = new TurnkeyClient(
     {
       baseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
     },
-    iframeStamper
+    iframeStamper,
   );
 
   const signedRequest = await client.stampGetWhoami({
@@ -33,14 +36,14 @@ export async function checkIsValid (iframeStamper: IframeStamper, organizationId
   });
 }
 
-export async function injectCredentialBundle (iframeStamper: IframeStamper) {
+export async function injectCredentialBundle(iframeStamper: IframeStamper) {
   const bundle = getItemWithExpiry(TURNKEY_BUNDLE_KEY);
   await iframeStamper.injectCredentialBundle(bundle);
 }
 
-export function EmailAuth (props: EmailAuthProps) {
+export function EmailAuth(props: EmailAuthProps) {
   const [iframeStamper, setIframeStamper] = useState<IframeStamper | null>(
-    null
+    null,
   );
   const {
     shouldClear,
@@ -109,8 +112,7 @@ export function EmailAuth (props: EmailAuthProps) {
     <div
       className="space-y-4 p-4 max-w-lg mx-auto"
       style={{display: iframeDisplay}}
-      id={TurnkeyIframeContainerId}
-    >
+      id={TurnkeyIframeContainerId}>
       <style>{iframeCss}</style>
     </div>
   );

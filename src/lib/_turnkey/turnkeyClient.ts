@@ -1,19 +1,21 @@
 import {Turnkey} from '@turnkey/sdk-server';
-import {Turnkey as PasskeyClient} from '@turnkey/sdk-browser';
-import {IframeStamper} from '@turnkey/iframe-stamper';
+import {
+  Turnkey as PasskeyClient,
+  TurnkeyBrowserClient,
+} from '@turnkey/sdk-browser';
 import {TurnkeyClient} from '@turnkey/http';
-import {WebauthnStamper} from "@turnkey/webauthn-stamper";
+import {WebauthnStamper} from '@turnkey/webauthn-stamper';
 
 // TODO do we really need multiple turnkey clients for all of the functionality we want??? - probably but double check
 
-const turnkeyApi = new Turnkey({
+export const turnkey = new Turnkey({
   apiBaseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
   apiPrivateKey: process.env.NEXT_PUBLIC_TURNKEY_API_PRIVATE_KEY!,
   apiPublicKey: process.env.NEXT_PUBLIC_TURNKEY_API_PUBLIC_KEY!,
   defaultOrganizationId: process.env.NEXT_PUBLIC_TURNKEY_ORGANIZATION_ID!,
 });
 
-const turnkeyBrowser = new PasskeyClient({
+export const passkeyClient = new PasskeyClient({
   apiBaseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
   defaultOrganizationId: process.env.NEXT_PUBLIC_TURNKEY_ORGANIZATION_ID!,
   // TODO Update this to programmatically use an env var based on environment
@@ -32,14 +34,24 @@ const turnkeyBrowser = new PasskeyClient({
 //   iframeStamper,
 // );
 
-const stamper = new WebauthnStamper({
+export const passkeyStamper = new WebauthnStamper({
   // TODO Update this to programmatically use an env var based on environment
   rpId: 'localhost',
 });
 
-const turnkeyClient = new TurnkeyClient({
-  baseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
-}, stamper);
+const turnkeyClient = new TurnkeyClient(
+  {
+    baseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
+  },
+  passkeyStamper,
+);
+
+export const browserClient = new TurnkeyBrowserClient({
+  readOnlySession: '',
+  stamper: undefined,
+  apiBaseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
+  organizationId: process.env.NEXT_PUBLIC_TURNKEY_ORGANIZATION_ID!,
+});
 
 export const turnkeyProviderConfig = {
   apiBaseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL!,
@@ -49,5 +61,5 @@ export const turnkeyProviderConfig = {
 };
 
 export const turnkeyClientWithStamper = turnkeyClient;
-export const turnkeyApiClient = turnkeyApi.apiClient();
-export const turnkeyPasskeyClient = turnkeyBrowser.passkeyClient();
+export const turnkeyApiClient = turnkey.apiClient();
+export const turnkeyPasskeyClient = passkeyClient.passkeyClient();

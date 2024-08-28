@@ -3,7 +3,6 @@ import {useMutation} from '@tanstack/react-query';
 import {useMemo} from 'react';
 
 export const PasskeyAuthComponent = () => {
-
   // TODO may be able to use pure turnkey signer here or alchemy turnkey signer without iFrame
   // const signer = useMemo(
   //   () =>
@@ -47,7 +46,6 @@ export const PasskeyAuthComponent = () => {
       {/*    <div>Email: {user.email}</div>*/}
       {/*  </div>*/}
       {/*)}*/}
-
     </div>
   );
 };

@@ -16,8 +16,6 @@ export const Providers = ({
 }: PropsWithChildren<{
   initialState?: AlchemyAccountsProviderProps['initialState'];
 }>) => {
-
-
   return (
     <ThemeProvider attribute="class">
       <TurnkeyProvider config={turnkeyProviderConfig}>

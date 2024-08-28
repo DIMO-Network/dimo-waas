@@ -22,7 +22,7 @@ export interface TransactionRequest extends WalletRequest {
 
 export interface TransactionTemplate {
   id: string;
-  data: TransactionTemplateData
+  data: TransactionTemplateData;
 }
 
 export interface TransactionTemplateData {
@@ -34,11 +34,17 @@ export interface PasskeyWalletRequest {
   email: string;
   encodedChallenge: string;
   attestation: {
-    credentialId: string
-    clientDataJson: string
-    attestationObject: string
-    transports: ('AUTHENTICATOR_TRANSPORT_BLE' | 'AUTHENTICATOR_TRANSPORT_INTERNAL' | 'AUTHENTICATOR_TRANSPORT_NFC' | 'AUTHENTICATOR_TRANSPORT_USB' | 'AUTHENTICATOR_TRANSPORT_HYBRID')[]
-  }
+    credentialId: string;
+    clientDataJson: string;
+    attestationObject: string;
+    transports: (
+      | 'AUTHENTICATOR_TRANSPORT_BLE'
+      | 'AUTHENTICATOR_TRANSPORT_INTERNAL'
+      | 'AUTHENTICATOR_TRANSPORT_NFC'
+      | 'AUTHENTICATOR_TRANSPORT_USB'
+      | 'AUTHENTICATOR_TRANSPORT_HYBRID'
+    )[];
+  };
 }
 
 // export interface PasskeyWalletResponse {
@@ -46,6 +52,7 @@ export interface PasskeyWalletRequest {
 //   addresses: string[];
 // }
 
-export interface AddPasskeyToExistingWalletRequest extends PasskeyWalletRequest {
+export interface AddPasskeyToExistingWalletRequest
+  extends PasskeyWalletRequest {
   wallet: object;
 }

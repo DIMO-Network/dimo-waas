@@ -1,9 +1,8 @@
-'use client'
+'use client';
 import {useRouter} from 'next/navigation';
 import {Button} from '@headlessui/react';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
-import {createWalletWithPasskey} from '@/lib/_turnkey/passkeyWallet';
-
+import {createAccountAndWalletWithPasskey} from '@/lib/_turnkey/passkeyWallet';
 
 // TODO Will need tweaking to add user email/auth for our system right now just creates a passkey and turnkey suborg
 
@@ -11,11 +10,10 @@ export const PasskeySignupComponent = () => {
   const router = useRouter();
 
   const handleAddPasskey = async () => {
-    const credential =
-      await turnkeyPasskeyClient?.createUserPasskey();
+    const credential = await turnkeyPasskeyClient?.createUserPasskey();
 
     if (credential) {
-      return await createWalletWithPasskey(credential)
+      return await createAccountAndWalletWithPasskey(credential);
     }
   };
 
@@ -25,9 +23,7 @@ export const PasskeySignupComponent = () => {
     <div>
       <div>
         <p>Add a passkey</p>
-        <p>
-          Follow your browser's prompts to add a passkey to your wallet.
-        </p>
+        <p>Follow your browser's prompts to add a passkey to your wallet.</p>
         <div>
           <Button
             className="rounded bg-sky-600 py-2 px-4 text-sm text-white data-[hover]:bg-sky-500 data-[active]:bg-sky-700"

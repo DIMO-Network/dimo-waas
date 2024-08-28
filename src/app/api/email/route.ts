@@ -1,18 +1,21 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {PasskeyWalletRequest} from '@/lib/utils/types';
-import {createAccountAndWalletWithPasskey} from '@/lib/_turnkey/passkeyWallet';
+import {
+  createAccountAndWallet,
+  createAccountAndWalletWithPasskey,
+} from '@/lib/_turnkey/passkeyWallet';
 import {PrismaClient} from '@prisma/client';
 
 export async function POST(request: NextRequest) {
   const prismaClient = new PrismaClient();
   try {
-    const payload: PasskeyWalletRequest = await request.json();
+    const payload: {email: string} = await request.json();
 
     if (!payload) {
       return NextResponse.json({error: 'No payload provided'}, {status: 400});
     }
 
-    const wallet = await createAccountAndWalletWithPasskey(payload);
+    const wallet = await createAccountAndWallet(payload);
 
     if (!wallet) {
       return NextResponse.json({error: 'Error creating wallet'}, {status: 500});

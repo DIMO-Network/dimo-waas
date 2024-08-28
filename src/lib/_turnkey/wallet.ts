@@ -4,7 +4,7 @@ import {turnkeyApiClient} from '@/lib/_turnkey/turnkeyClient';
 const dropActivityFromResponse = (response: any) => {
   const {activity, ...rest} = response;
   return rest;
-}
+};
 
 export const createWallet = async () => {
   return turnkeyApiClient

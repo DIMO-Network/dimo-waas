@@ -2,7 +2,6 @@ import {cookieStorage, createConfig} from '@alchemy/aa-alchemy/config';
 import {polygonAmoy} from '@alchemy/aa-core';
 import {QueryClient} from '@tanstack/react-query';
 
-
 export const chain = polygonAmoy;
 // TODO look into how to set up this alchemy config to use the Turnkey signer
 export const config = createConfig({

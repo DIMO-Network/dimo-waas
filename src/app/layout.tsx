@@ -7,7 +7,6 @@ import {headers} from 'next/headers';
 import {config} from '@/config';
 import {Providers} from './providers';
 
-
 const firaCode = Fira_Code({subsets: ['latin']});
 
 export const metadata: Metadata = {
@@ -21,14 +20,16 @@ const initialState = cookieToInitialState(
   headers().get('cookie') ?? undefined,
 );
 
-export default function RootLayout ({children}: Readonly<{children: React.ReactNode}>) {
+export default function RootLayout({
+  children,
+}: Readonly<{children: React.ReactNode}>) {
   return (
-      // Hydration warning suppression to prevent console errors for NextTheme
-      <html lang="en" suppressHydrationWarning>
-        {/* Hydration warning suppression to prevent console errors for browser installed apps */}
-        <body className={firaCode.className} suppressHydrationWarning={true}>
-              <Providers initialState={initialState}>{children}</Providers>
-        </body>
-      </html>
+    // Hydration warning suppression to prevent console errors for NextTheme
+    <html lang="en" suppressHydrationWarning>
+      {/* Hydration warning suppression to prevent console errors for browser installed apps */}
+      <body className={firaCode.className} suppressHydrationWarning={true}>
+        <Providers initialState={initialState}>{children}</Providers>
+      </body>
+    </html>
   );
 }

@@ -3,7 +3,9 @@ import {TurnkeySigner} from '@turnkey/ethers';
 import {turnkeyApiClient} from '@/lib/_turnkey/turnkeyClient';
 import {WalletResponse} from '@/lib/utils/types';
 
-const rpcProvider = new ethers.JsonRpcProvider('https://polygon-pokt.nodies.app/');
+const rpcProvider = new ethers.JsonRpcProvider(
+  'https://polygon-pokt.nodies.app/',
+);
 
 const buildBasicTurnkeySigner = (data: WalletResponse) => {
   return new TurnkeySigner({
@@ -13,25 +15,24 @@ const buildBasicTurnkeySigner = (data: WalletResponse) => {
   });
 };
 
-const buildAATurnkeySigner = (data: WalletResponse) => {
-
-}
+const buildAATurnkeySigner = (data: WalletResponse) => {};
 
 const buildTransaction = (data: WalletResponse, transactionParams: any) => {
   return {
     from: data.addresses[0],
     to: transactionParams.to,
-    value: transactionParams.value
-  }
-}
+    value: transactionParams.value,
+  };
+};
 
 // TODO update type for param
 export const createTransactionChannel = (data: any, transactionParams: any) => {
   const turnkeySigner = buildBasicTurnkeySigner(data);
   console.log(JSON.stringify(turnkeySigner));
   const transactionData = buildTransaction(data, transactionParams);
-  return turnkeySigner.connect(rpcProvider).populateTransaction(transactionData);
-
+  return turnkeySigner
+    .connect(rpcProvider)
+    .populateTransaction(transactionData);
 };
 
 export const sendTransaction = async (data: any, transactionParams: any) => {
@@ -40,7 +41,7 @@ export const sendTransaction = async (data: any, transactionParams: any) => {
     .createTransaction(transactionBase)
     .catch((error: any) => {
       console.error('error creating transaction', error);
-      return error
+      return error;
     })
     .then((response: any) => {
       return response;

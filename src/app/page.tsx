@@ -5,7 +5,7 @@ import {createWallet} from '@/lib/_turnkey/wallet';
 import {createTransactionChannel} from '@/lib/_turnkey/transaction';
 import {
   addPasskeyToExistingWallet,
-  createWalletWithPasskey,
+  createAccountAndWalletWithPasskey,
 } from '@/lib/_turnkey/passkeyWallet';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
 
@@ -47,7 +47,7 @@ export default function Home() {
     const {encodedChallenge, attestation} =
       await turnkeyPasskeyClient?.createUserPasskey();
 
-    createWalletWithPasskey({encodedChallenge, attestation})
+    createAccountAndWalletWithPasskey({encodedChallenge, attestation})
       .catch(error => {
         console.log(error);
       })
