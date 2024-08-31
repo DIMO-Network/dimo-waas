@@ -152,6 +152,7 @@ export default function EmailAuthPage() {
       body: JSON.stringify({
         email: email,
         targetPublicKey: authIframeClient.iframePublicKey as string,
+        magicLink: `http://${window.location.host}/email-auth?token=%s`,
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -181,7 +182,7 @@ export default function EmailAuthPage() {
 
     const authInfo = await login();
 
-    if (authInfo.subOrganizationId) {
+    if (authInfo!.subOrganizationId) {
       setEmailAuthInfo(authInfo);
     } else {
       const response = await fetch(`/api/email`, {
@@ -220,9 +221,7 @@ export default function EmailAuthPage() {
       return;
     }
 
-    const {organizationId} = await authIframeClient.getWhoami({
-      organizationId: emailAuthInfo.subOrganizationId,
-    });
+    const {organizationId} = await authIframeClient.getWhoami();
 
     const accounts = await getAccountWallet(organizationId);
 

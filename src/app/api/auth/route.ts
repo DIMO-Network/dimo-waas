@@ -8,6 +8,8 @@ export const POST = async (req: NextRequest) => {
   const prismaClient = new PrismaClient();
 
   try {
+    console.info(body);
+
     const user = await prismaClient.user.findUnique({
       where: {
         email: body.email,
@@ -25,7 +27,7 @@ export const POST = async (req: NextRequest) => {
       emailCustomization: {
         appName: 'DIMO',
         logoUrl: 'https://explorer.dimo.zone/images/misc/dimo.svg',
-        magicLinkTemplate: 'http://localhost:3000/email-auth?token=%s',
+        magicLinkTemplate: body.magicLink,
       },
     });
 

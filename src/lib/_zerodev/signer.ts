@@ -1,5 +1,4 @@
-import {TurnkeySigner} from '@turnkey/ethers';
-import {passkeyStamper, turnkeyApiClient} from '@/lib/_turnkey/turnkeyClient';
+import {turnkeyApiClient} from '@/lib/_turnkey/turnkeyClient';
 import {createAccount} from '@turnkey/viem';
 import {createPublicClient, createWalletClient, http} from 'viem';
 import {polygon} from 'viem/chains';
@@ -10,15 +9,8 @@ import {
 import {SmartAccountSigner} from 'permissionless/accounts';
 import {signerToEcdsaValidator} from '@zerodev/ecdsa-validator';
 import {KERNEL_V3_1} from '@zerodev/sdk/constants';
-import {
-  createKernelAccount,
-  createKernelAccountClient,
-  createZeroDevPaymasterClient,
-} from '@zerodev/sdk';
-import {WebauthnStamper} from '@turnkey/webauthn-stamper';
+import {createKernelAccount, createZeroDevPaymasterClient} from '@zerodev/sdk';
 import {TurnkeyClient} from '@turnkey/http';
-import {IframeStamper} from '@turnkey/iframe-stamper';
-import {TurnkeyBrowserClient, TurnkeyIframeClient} from '@turnkey/sdk-browser';
 import {TStamper} from '@turnkey/http/dist/base';
 
 const PROJECT_ID = 'c3526d90-4977-44e3-8584-8820693a7fd9';

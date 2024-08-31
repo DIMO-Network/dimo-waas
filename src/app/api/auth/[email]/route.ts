@@ -7,8 +7,9 @@ export const GET = async (
   {params}: {params: {email: string}},
 ) => {
   const prismaClient = new PrismaClient();
-
   try {
+    console.info(params);
+
     const user = await prismaClient.user.findUnique({
       where: {
         email: params.email,
@@ -19,7 +20,10 @@ export const GET = async (
       return NextResponse.json({subOrganizationId: null});
     }
 
-    return NextResponse.json({subOrganizationId: user.subOrganizationId});
+    return NextResponse.json({
+      subOrganizationId: user.subOrganizationId,
+      hasPasskey: user.hasPasskey,
+    });
   } finally {
     await prismaClient.$disconnect();
   }
