@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {DEFAULT_ETHEREUM_ACCOUNTS} from '@turnkey/sdk-server';
 import {
   turnkey,

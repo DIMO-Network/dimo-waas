@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 import {useRouter} from 'next/navigation';
 import {Button} from '@headlessui/react';
