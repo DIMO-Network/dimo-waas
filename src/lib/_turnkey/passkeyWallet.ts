@@ -175,12 +175,14 @@ const createPrivateKey = async ({organizationId}: {organizationId: string}) => {
   return privateKeys[0];
 };
 
-export const addPasskeyToExistingWallet: (
-  data: AddPasskeyToExistingWalletRequest,
-) => Promise<any> = async ({
-  encodedChallenge: challenge,
-  attestation,
-  wallet,
-}) => {};
-
-export const authenticateWithPasskey = async () => {};
+// export const addPasskeyToExistingWallet: (data: {
+//   encodedChallenge: any;
+//   attestation: any;
+//   wallet: {};
+// }) => Promise<any> = async ({
+//   encodedChallenge: challenge,
+//   attestation,
+//   wallet,
+// }) => {};
+//
+// export const authenticateWithPasskey = async () => {};

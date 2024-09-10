@@ -4,7 +4,6 @@ import {useState} from 'react';
 import {createWallet} from '@/lib/_turnkey/wallet';
 import {createTransactionChannel} from '@/lib/_turnkey/transaction';
 import {
-  addPasskeyToExistingWallet,
   createAccountAndWalletWithPasskey,
 } from '@/lib/_turnkey/passkeyWallet';
 import {turnkeyPasskeyClient} from '@/lib/_turnkey/turnkeyClient';
@@ -18,7 +17,7 @@ const toObject = (data: any) => {
   );
 };
 
-export default function Home() {
+export default function Home () {
   const [walletData, setWalletData] = useState({});
   const [transactionData, setTransactionData] = useState({});
   const [newAccountPasskeyData, setNewAccountPasskeyData] = useState({});
@@ -44,10 +43,12 @@ export default function Home() {
   };
 
   const handlePasskeyOnClick = async () => {
-    const {encodedChallenge, attestation} =
+    const passkey_params =
       await turnkeyPasskeyClient?.createUserPasskey();
-
-    createAccountAndWalletWithPasskey({encodedChallenge, attestation})
+    console.log('PASSKEY DATA::', passkey_params);
+ const {encodedChallenge, attestation} = passkey_params;
+    const email = 'crystal.adkins+testing_turnkey@revelry.co'
+    createAccountAndWalletWithPasskey({encodedChallenge, attestation, email})
       .catch(error => {
         console.log(error);
       })
@@ -59,27 +60,27 @@ export default function Home() {
       });
   };
 
-  const handleAddPasskeyOnClick = async () => {
-    if (walletData?.walletId) {
-      throw Error('No wallet data, create wallet first');
-    }
-
-    const {encodedChallenge, attestation} =
-      await turnkeyPasskeyClient?.createUserPasskey();
-
-    addPasskeyToExistingWallet({
-      encodedChallenge,
-      attestation,
-      wallet: walletData,
-    })
-      .catch(error => {
-        console.log(error);
-      })
-      .then(response => {
-        console.log({response});
-        setExistingAccountPasskeyData(response);
-      });
-  };
+  // const handleAddPasskeyOnClick = async () => {
+  //   if (walletData?.walletId) {
+  //     throw Error('No wallet data, create wallet first');
+  //   }
+  //
+  //   const {encodedChallenge, attestation} =
+  //     await turnkeyPasskeyClient?.createUserPasskey();
+  //
+  //   addPasskeyToExistingWallet({
+  //     encodedChallenge,
+  //     attestation,
+  //     wallet: walletData,
+  //   })
+  //     .catch(error => {
+  //       console.log(error);
+  //     })
+  //     .then(response => {
+  //       console.log({response});
+  //       setExistingAccountPasskeyData(response);
+  //     });
+  // };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -133,7 +134,7 @@ export default function Home() {
         <div className={'flex flex-col items-center'}>
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-            onClick={handleAddPasskeyOnClick}
+            // onClick={handleAddPasskeyOnClick}
             disabled={true}>
             {'Add Passkey to Existing Turnkey Wallet'}
           </button>

@@ -23,7 +23,7 @@ export const PasskeySignupComponent = () => {
     <div>
       <div>
         <p>Add a passkey</p>
-        <p>Follow your browser's prompts to add a passkey to your wallet.</p>
+        <p>Follow your browsers prompts to add a passkey to your wallet.</p>
         <div>
           <Button
             className="rounded bg-sky-600 py-2 px-4 text-sm text-white data-[hover]:bg-sky-500 data-[active]:bg-sky-700"
