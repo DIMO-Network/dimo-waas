@@ -194,6 +194,7 @@ export default function Auth () {
       data: '0x',
     });
 
+    // @ts-ignore
     const transaction = await kernelClient.sendUserOperation({
       userOperation: {
         callData,
@@ -204,6 +205,7 @@ export default function Auth () {
 
     const {challenge, state} = await getDimoChallenge(kernelAddress);
 
+    // @ts-ignore
     const kernelSigned = await kernelClient.signMessage({
       message: challenge,
     });

@@ -123,6 +123,7 @@ export default function EmailAuthPage () {
       data: '0x',
     });
 
+    // @ts-ignore
     const transaction = await kernelClient.sendUserOperation({
       userOperation: {
         callData,
@@ -140,6 +141,7 @@ export default function EmailAuthPage () {
 
     const token = await getDimoToken(state, kernelSigned);
 
+    // @ts-ignore
     setTokenData(token);
   };
 
