@@ -158,9 +158,9 @@ export default function EmailAuthPage () {
         targetPublicKey: authIframeClient.iframePublicKey as string,
         magicLink: `http://${window.location.host}/email-auth?token=%s`,
       }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // },
     });
 
     if (!response.ok) {
@@ -194,9 +194,9 @@ export default function EmailAuthPage () {
         body: JSON.stringify({
           email: email,
         }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
       });
 
       if (!response.ok) {
