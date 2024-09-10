@@ -11,6 +11,7 @@ import {signerToEcdsaValidator} from '@zerodev/ecdsa-validator';
 import {KERNEL_V3_1} from '@zerodev/sdk/constants';
 import {createKernelAccount, createZeroDevPaymasterClient} from '@zerodev/sdk';
 import {TurnkeyClient} from '@turnkey/http';
+// @ts-ignore
 import {TStamper} from '@turnkey/http/dist/base';
 
 const PROJECT_ID = 'c3526d90-4977-44e3-8584-8820693a7fd9';
@@ -76,6 +77,7 @@ export const getZeroDevKernelAccount = async (
   });
 };
 
+// @ts-ignore
 export const sponsorUserOperation = async ({userOperation}) => {
   const zerodevPaymaster = createZeroDevPaymasterClient({
     chain: polygon,
