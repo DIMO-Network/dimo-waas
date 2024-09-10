@@ -97,7 +97,7 @@ const base64UrlEncode = (challenge: ArrayBuffer): string => {
       });
         console.info('PRIVATE KEY TAG::: ', p);*/
 
-export default function Auth() {
+export default function Auth () {
   // TODO look into `useAuthModal` from alchemy-aa/react
 
   const [email, setEmail] = useState<string>('');
