@@ -135,6 +135,7 @@ export default function EmailAuthPage () {
 
     const kernelSigned = await kernelClient.signMessage({
       message: challenge,
+      account: kernelAddress,
     });
 
     const token = await getDimoToken(state, kernelSigned);
