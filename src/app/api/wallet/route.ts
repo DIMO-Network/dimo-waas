@@ -10,7 +10,11 @@ export async function POST (request: NextRequest) {
         ? data.walletAddresses[0]
         : createWallet().then(response => response.addresses[0]);
 
-    return createTransactionChannel(walletData);
+    const transactionParams = {
+      to: data.serviceProvider.walletAddress,
+      value: data.value,
+    };
+    return createTransactionChannel(walletData, transactionParams);
   });
 
   return NextResponse.json(response);
