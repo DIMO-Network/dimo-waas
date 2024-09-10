@@ -20,7 +20,7 @@ const initialState = cookieToInitialState(
   headers().get('cookie') ?? undefined,
 );
 
-export default function RootLayout({
+export default function RootLayout ({
   children,
 }: Readonly<{children: React.ReactNode}>) {
   return (
