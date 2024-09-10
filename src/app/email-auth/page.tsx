@@ -69,7 +69,7 @@ import {useSearchParams} from 'next/navigation';
 
         ;*/
 
-export default function EmailAuthPage() {
+export default function EmailAuthPage () {
   const searchParams = useSearchParams();
 
   const [walletData, setWalletData] = useState({});
@@ -147,7 +147,7 @@ export default function EmailAuthPage() {
       return;
     }
 
-    const response = await fetch(`/api/auth`, {
+    const response = await fetch('/api/auth', {
       method: 'POST',
       body: JSON.stringify({
         email: email,
@@ -185,7 +185,7 @@ export default function EmailAuthPage() {
     if (authInfo!.subOrganizationId) {
       setEmailAuthInfo(authInfo);
     } else {
-      const response = await fetch(`/api/email`, {
+      const response = await fetch('/api/email', {
         method: 'POST',
         body: JSON.stringify({
           email: email,

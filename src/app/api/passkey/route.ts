@@ -3,7 +3,7 @@ import {PasskeyWalletRequest} from '@/lib/utils/types';
 import {createAccountAndWalletWithPasskey} from '@/lib/_turnkey/passkeyWallet';
 import {PrismaClient} from '@prisma/client';
 
-export async function POST(request: NextRequest) {
+export async function POST (request: NextRequest) {
   const prismaClient = new PrismaClient();
   try {
     const payload: PasskeyWalletRequest = await request.json();

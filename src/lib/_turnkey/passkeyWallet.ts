@@ -2,9 +2,7 @@ import {DEFAULT_ETHEREUM_ACCOUNTS} from '@turnkey/sdk-server';
 import {
   turnkey,
   turnkeyApiClient,
-  passk,
   turnkeyPasskeyClient,
-  turnkeyProxy,
 } from '@/lib/_turnkey/turnkeyClient';
 import {
   PasskeyWalletRequest,
@@ -89,7 +87,7 @@ export const createAccountAndWalletWithPasskey: (
         {
           curve: 'CURVE_SECP256K1',
           pathFormat: 'PATH_FORMAT_BIP32',
-          path: "m/44'/60'/0'/0/0",
+          path: 'm/44\'/60\'/0\'/0/0',
           addressFormat: 'ADDRESS_FORMAT_ETHEREUM',
         },
       ],
@@ -132,7 +130,7 @@ export const createAccountAndWallet: (data: {
         {
           curve: 'CURVE_SECP256K1',
           pathFormat: 'PATH_FORMAT_BIP32',
-          path: "m/44'/60'/0'/0/0",
+          path: 'm/44\'/60\'/0\'/0/0',
           addressFormat: 'ADDRESS_FORMAT_ETHEREUM',
         },
       ],
