@@ -223,6 +223,7 @@ export default function Auth () {
     const {subOrganizationId} = await response.json();
 
     if (subOrganizationId) {
+      // @ts-ignore
       const {organizationId} = await passkeyClient?.getWhoami({
         organizationId: subOrganizationId,
       });
