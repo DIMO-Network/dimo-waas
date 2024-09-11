@@ -7,5 +7,5 @@ export async function GET () {
     appclips: {},
   };
 
-  return Response.json({data});
+  return Response.json(data);
 }
