@@ -10,7 +10,6 @@ const proxyHandler = turnkey.nextProxyHandler({
 })
 
 const POST = (request: NextRequest) => {
-    const t = new NextResponse();
      return proxyHandler(request, NextResponse);
 };
 
