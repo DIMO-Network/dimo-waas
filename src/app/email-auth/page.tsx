@@ -9,6 +9,7 @@ import {
   passkeyStamper,
   turnkeyApiClient,
 } from '@/lib/_turnkey/turnkeyClient';
+import { TurnkeySDKApiTypes, WebauthnStamper } from '@turnkey/sdk-browser';
 import {
   BUNDLER_RPC,
   getAccountWallet,
@@ -22,7 +23,6 @@ import {createKernelAccountClient} from '@zerodev/sdk';
 import {polygon} from 'viem/chains';
 import {ENTRYPOINT_ADDRESS_V07} from 'permissionless';
 import {http} from 'viem';
-import {WebauthnStamper} from '@turnkey/webauthn-stamper';
 import {IframeStamper} from '@turnkey/iframe-stamper';
 import {TurnkeyBrowserClient} from '@turnkey/sdk-browser';
 import {TurnkeyClient} from '@turnkey/http';
@@ -67,7 +67,23 @@ import {useSearchParams} from 'next/navigation';
 
         setWalletData(accounts[0]);
 
-        ;*/
+        await authIframeClient.createUsers({
+      organizationId: organizationId,
+      users: [
+        {
+          userName: 'DIMO user',
+          apiKeys: [
+            {
+              apiKeyName: 'DIMO API Key',
+              publicKey:"03b8473f4fef20eb703126c7367587932284880e0d9f8f325a09823e74ad754feb",
+            }
+          ],
+          authenticators: [],
+          userTags: ["04238fb6-0d80-4ab8-ab29-a1a4f378d4db"],
+        },
+      ],
+    });
+ */
 
 export default function EmailAuthPage() {
   const searchParams = useSearchParams();
@@ -223,13 +239,26 @@ export default function EmailAuthPage() {
 
     const {organizationId} = await authIframeClient.getWhoami();
 
+    await authIframeClient.deleteUsers({
+      organizationId,
+      userIds: ["15da80e8-767b-4932-9cbc-9ba86d2eea4d"]
+    });
+
+    await authIframeClient.updateRootQuorum({
+      organizationId,
+      threshold: 1,
+      userIds: ["b092dd52-a457-42b3-a241-1bb0116d4369"]
+
+    });
+
+/*
     const accounts = await getAccountWallet(organizationId);
 
     setWalletData(accounts[0]);
 
     const {address} = accounts[0];
 
-    await zeroDevAndDIMOLogin(organizationId, address);
+    await zeroDevAndDIMOLogin(organizationId, address);*/
   };
 
   useEffect(() => {

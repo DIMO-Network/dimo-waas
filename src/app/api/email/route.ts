@@ -11,8 +11,6 @@ export async function POST(request: NextRequest) {
   try {
     const payload: {email: string} = await request.json();
 
-    console.info(payload);
-
     if (!payload) {
       return NextResponse.json({error: 'No payload provided'}, {status: 400});
     }

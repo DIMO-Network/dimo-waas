@@ -81,6 +81,12 @@ export const createAccountAndWalletWithPasskey: (
         ],
         oauthProviders: [],
       },
+      {
+        userName: 'DIMO USER',
+        apiKeys: [],
+        authenticators: [],
+        oauthProviders: [],
+      }
     ],
     wallet: {
       walletName: walletName,
