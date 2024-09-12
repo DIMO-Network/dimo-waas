@@ -253,7 +253,6 @@ const configureSubOrganization = async (
 // @ts-ignore
 const sponsorUserOperation = async ({ userOperation }) => {
   const zerodevPaymaster = createZeroDevPaymasterClient({
-    chain: polygon,
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     transport: http(paymasterRpc),
   });
