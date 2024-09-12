@@ -31,6 +31,8 @@ const POST = async (request: NextRequest) => {
       magicLinkTemplate: `${redirectUrl}&token=%s`,
     },
   });
+
+  return NextResponse.json(null, { status: 204 });
 };
 
 export { POST };
