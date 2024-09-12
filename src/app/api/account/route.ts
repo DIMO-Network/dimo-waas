@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  AccountCreateRequest,
-} from "@/src/models/account";
+import { AccountCreateRequest } from "@/src/models/account";
 import { createOnChainAccount } from "@/src/services/wallet.service";
 import { checkUserRegistered } from "@/src/services/user.service";
 
