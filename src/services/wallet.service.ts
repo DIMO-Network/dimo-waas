@@ -16,8 +16,8 @@ import {
   turnkeyClient,
 } from "@/src/clients/turnkey";
 import { createAccount } from "@turnkey/viem";
-import { createPublicClient, createWalletClient, http } from "viem";
-import { polygon } from "viem/chains";
+import { Chain, createPublicClient, createWalletClient, http } from "viem";
+import { polygon, polygonAmoy } from "viem/chains";
 import {
   bundlerActions,
   ENTRYPOINT_ADDRESS_V07,
@@ -133,6 +133,7 @@ const createKernelAccountAddress = async (
   organizationId: string,
   turnkeyAddress: string,
 ): Promise<KernelAccountProcess> => {
+  const chain = getChain();
   const localAccount = await createAccount({
     client: stamperClient,
     organizationId: organizationId,
@@ -142,6 +143,7 @@ const createKernelAccountAddress = async (
 
   const smartAccountClient = createWalletClient({
     account: localAccount,
+    chain: chain,
     transport: http(bundleRpc),
   });
 
@@ -149,6 +151,7 @@ const createKernelAccountAddress = async (
     walletClientToSmartAccountSigner(smartAccountClient);
 
   const publicClient = createPublicClient({
+    chain: chain,
     transport: http(bundleRpc),
   });
 
@@ -168,6 +171,7 @@ const createKernelAccountAddress = async (
 
   const kernelClient = createKernelAccountClient({
     account: zeroDevKernelAccount,
+    chain: chain,
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     bundlerTransport: http(bundleRpc),
     middleware: {
@@ -215,7 +219,6 @@ const configureSubOrganization = async (
     userTagName: "END USER TAG",
     userIds: [],
   });
-
   const endUser: SubOrganizationRootUser = {
     userName: payload.email,
     userEmail: payload.email,
@@ -249,7 +252,9 @@ const configureSubOrganization = async (
 
 // @ts-ignore
 const sponsorUserOperation = async ({ userOperation }) => {
+  const chain = getChain();
   const zerodevPaymaster = createZeroDevPaymasterClient({
+    chain: chain,
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     transport: http(paymasterRpc),
   });
@@ -257,4 +262,14 @@ const sponsorUserOperation = async ({ userOperation }) => {
     userOperation,
     entryPoint: ENTRYPOINT_ADDRESS_V07,
   });
+};
+
+const getChain = (): Chain => {
+  const { VERCEL_ENV: environment } = process.env;
+
+  if (environment === "production") {
+    return polygon;
+  }
+
+  return polygonAmoy;
 };
