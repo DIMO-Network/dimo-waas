@@ -46,7 +46,7 @@ export async function POST (request: NextRequest) {
             userName: 'DIMO USER',
             apiKeys:  [{
                 apiKeyName: 'DIMO API KEY',
-                publicKey: "03b8473f4fef20eb703126c7367587932284880e0d9f8f325a09823e74ad754feb", // this should be an environment variable
+                publicKey: process.env.NEXT_PUBLIC_TURNKEY_API_PUBLIC_KEY! // this should be an environment variable
                 curveType: "API_KEY_CURVE_P256"
             }],
             authenticators: [],
