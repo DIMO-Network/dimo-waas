@@ -6,6 +6,7 @@ const GET = async (
   _: NextRequest,
   { params }: { params: UserRegisteredRequest },
 ) => {
+
   const { email } = params;
 
   if (!email) {
