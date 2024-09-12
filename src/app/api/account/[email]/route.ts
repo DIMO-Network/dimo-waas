@@ -8,6 +8,10 @@ const GET = async (
 ) => {
   const { email } = params;
 
+  if (!email) {
+    return NextResponse.json({ error: "No email provided" }, { status: 400 });
+  }
+
   const response = await checkUserRegistered(email);
 
   if (!response) {
