@@ -10,6 +10,10 @@ const GET = async (
 
   const response = await checkUserRegistered(email);
 
+  if (!response) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
   return NextResponse.json(response);
 };
 

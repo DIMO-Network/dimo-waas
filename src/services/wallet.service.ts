@@ -31,84 +31,66 @@ import {
   createKernelAccountClient,
   createZeroDevPaymasterClient,
 } from "@zerodev/sdk";
+import { checkUserRegistered, upsertUser } from "@/src/services/user.service";
 
 export const createOnChainAccount = async (
   payload: AccountCreateRequest,
 ): Promise<AccountCreateResponse> => {
-  const prismaClient = new PrismaClient();
-  try {
-    const user = await prismaClient.user.findUnique({
-      where: {
-        email: payload.email,
-      },
+  const { organizationIds } = await turnkeyClient.getSubOrgIds({
+    filterType: "NAME",
+    filterValue: `DIMO ${payload.email}`,
+  });
+
+  let organizationId: string;
+  let turnkeyAddress: string;
+
+  if (organizationIds.length > 0) {
+    const subOrganizationId = organizationIds[0];
+
+    const { wallets } = await turnkeyClient.getWallets({
+      organizationId: subOrganizationId,
     });
 
-    let organizationId: string;
-    let turnkeyAddress: string;
+    const { accounts } = await turnkeyClient.getWalletAccounts({
+      organizationId: subOrganizationId,
+      walletId: wallets[0].walletId,
+    });
 
-    if (user) {
-      const { subOrganizationId } = user;
-      const { wallets } = await turnkeyClient.getWallets({
-        organizationId: subOrganizationId,
-      });
-
-      const { accounts } = await turnkeyClient.getWalletAccounts({
-        organizationId: subOrganizationId,
-        walletId: wallets[0].walletId,
-      });
-
-      organizationId = subOrganizationId;
-      const { address } = accounts[0];
-      turnkeyAddress = address;
-    } else {
-      const { subOrganizationId, wallet } = await createSubOrganization(
-        payload.email,
-      );
-
-      const { addresses } = wallet!;
-
-      turnkeyAddress = addresses[0];
-      organizationId = subOrganizationId;
-    }
-
-    const { kernelAddress, success, reason } = await createKernelAccountAddress(
-      organizationId,
-      turnkeyAddress,
+    organizationId = subOrganizationId!;
+    const { address } = accounts[0];
+    turnkeyAddress = address;
+  } else {
+    const { subOrganizationId, wallet } = await createSubOrganization(
+      payload.email,
     );
 
-    if (!success) {
-      throw new Error(reason);
-    }
+    const { addresses } = wallet!;
 
-    await configureSubOrganization(payload, organizationId);
-
-    if (!user) {
-      await prismaClient.user.create({
-        data: {
-          email: payload.email,
-          subOrganizationId: organizationId,
-          hasPasskey: !!payload.attestation,
-        },
-      });
-    } else {
-      await prismaClient.user.update({
-        where: {
-          email: payload.email,
-        },
-        data: {
-          subOrganizationId: organizationId,
-          hasPasskey: !!payload.attestation,
-        },
-      });
-    }
-
-    return {
-      walletAddress: kernelAddress,
-      subOrganizationId: organizationId,
-    };
-  } finally {
-    prismaClient.$disconnect();
+    turnkeyAddress = addresses[0];
+    organizationId = subOrganizationId;
   }
+
+  const { kernelAddress, success, reason } = await createKernelAccountAddress(
+    organizationId,
+    turnkeyAddress,
+  );
+
+  if (!success) {
+    throw new Error(reason);
+  }
+
+  await configureSubOrganization(payload, organizationId);
+
+  await upsertUser({
+    email: payload.email,
+    subOrganizationId: organizationId,
+    hasPasskey: !!payload.attestation,
+  });
+
+  return {
+    walletAddress: kernelAddress,
+    subOrganizationId: organizationId,
+  };
 };
 
 const createSubOrganization = async (
@@ -215,6 +197,7 @@ const createKernelAccountAddress = async (
     bundlerActions(ENTRYPOINT_ADDRESS_V07),
   );
 
+  // TODO: check if this is really necessary
   const { success, reason } = await bundlerClient.waitForUserOperationReceipt({
     hash: transaction,
   });

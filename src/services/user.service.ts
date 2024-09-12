@@ -24,3 +24,29 @@ export const checkUserRegistered = async (
     prismaClient.$disconnect();
   }
 };
+
+export const upsertUser = async (user: {
+  email: string;
+  subOrganizationId: string;
+  hasPasskey: boolean;
+}) => {
+  const prismaClient = new PrismaClient();
+  try {
+    await prismaClient.user.upsert({
+      where: {
+        email: user.email,
+      },
+      update: {
+        subOrganizationId: user.subOrganizationId,
+        hasPasskey: user.hasPasskey,
+      },
+      create: {
+        email: user.email,
+        subOrganizationId: user.subOrganizationId,
+        hasPasskey: user.hasPasskey,
+      },
+    });
+  } finally {
+    prismaClient.$disconnect();
+  }
+};
