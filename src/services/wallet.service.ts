@@ -30,7 +30,7 @@ import {
   createKernelAccountClient,
   createZeroDevPaymasterClient,
 } from "@zerodev/sdk";
-import { checkUserRegistered, upsertUser } from "@/src/services/user.service";
+import { upsertUser } from "@/src/services/user.service";
 
 export const createOnChainAccount = async (
   payload: AccountCreateRequest,
