@@ -6,7 +6,7 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: "",//TODO set up sentry project and put dsn here
+  dsn: "", //TODO set up sentry project and put dsn here
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1,
