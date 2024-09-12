@@ -129,7 +129,7 @@ const createSubOrganization = async (
   };
 
   const subOrgPayload: TurnkeySDKApiTypes.TCreateSubOrganizationBody = {
-    subOrganizationName: `DIMO ${userEmail} ${Date.now()} `,
+    subOrganizationName: `DIMO ${userEmail}`,
     rootQuorumThreshold: 1,
     rootUsers: [dimoUser],
     wallet: {
