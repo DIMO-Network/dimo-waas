@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { AccountCreateRequest } from "@/src/models/account";
+import {NextRequest, NextResponse} from "next/server";
+import {AccountCreateRequest, AccountCreateResponse} from "@/src/models/account";
 import { createOnChainAccount } from "@/src/services/wallet.service";
 import { checkUserRegistered } from "@/src/services/user.service";
 
-const POST = async (request: NextResponse) => {
+const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as AccountCreateRequest;
 
   if (!payload) {
