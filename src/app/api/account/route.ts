@@ -40,6 +40,7 @@ const GET = async (request: NextRequest) => {
   if (!email) {
     return NextResponse.json({ error: "No email provided" }, { status: 400 });
   }
+  console.info(`Checking user registration for ${email}`);
 
   const response = await checkUserRegistered(email);
 
