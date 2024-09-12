@@ -193,6 +193,7 @@ const createKernelAccountAddress = async (
   });
 
   const bundlerClient = kernelClient.extend(
+    // @ts-ignore
     bundlerActions(ENTRYPOINT_ADDRESS_V07),
   );
 
@@ -248,6 +249,7 @@ const configureSubOrganization = async (
   });
 };
 
+// @ts-ignore
 const sponsorUserOperation = async ({ userOperation }) => {
   const zerodevPaymaster = createZeroDevPaymasterClient({
     chain: polygon,
