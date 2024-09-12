@@ -142,7 +142,6 @@ const createKernelAccountAddress = async (
 
   const smartAccountClient = createWalletClient({
     account: localAccount,
-    chain: polygon,
     transport: http(bundleRpc),
   });
 
@@ -150,7 +149,6 @@ const createKernelAccountAddress = async (
     walletClientToSmartAccountSigner(smartAccountClient);
 
   const publicClient = createPublicClient({
-    chain: polygon,
     transport: http(bundleRpc),
   });
 
@@ -170,7 +168,6 @@ const createKernelAccountAddress = async (
 
   const kernelClient = createKernelAccountClient({
     account: zeroDevKernelAccount,
-    chain: polygon,
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     bundlerTransport: http(bundleRpc),
     middleware: {
