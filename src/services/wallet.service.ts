@@ -218,6 +218,7 @@ const configureSubOrganization = async (
     userTagName: "END USER TAG",
     userIds: [],
   });
+
   const endUser: SubOrganizationRootUser = {
     userName: payload.email,
     userEmail: payload.email,
