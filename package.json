@@ -8,21 +8,22 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "npx prisma generate",
     "lint:format": "prettier . --check --log-level warn --write \"./**/*.{js,ts,css,md,json,tsx}\""
   },
   "dependencies": {
-    "@sentry/nextjs": "^8.26.0",
-    "@turnkey/sdk-server": "^1.2.1",
-    "next": "^14.2.5",
-    "react": "^18",
-    "react-dom": "^18",
     "@prisma/client": "^5.18.0",
-    "@turnkey/viem": "^0.4.26",
+    "@sentry/nextjs": "^8.26.0",
     "@turnkey/ethers": "^1.0.16",
     "@turnkey/http": "^2.12.1",
-    "@zerodev/sdk": "^5.3.13",
+    "@turnkey/sdk-server": "^1.2.1",
+    "@turnkey/viem": "^0.4.26",
     "@zerodev/ecdsa-validator": "^5.3.1",
-    "permissionless": "^0.1.29"
+    "@zerodev/sdk": "^5.3.13",
+    "next": "^14.2.5",
+    "permissionless": "^0.1.29",
+    "react": "^18",
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^22.4.1",
@@ -32,8 +33,8 @@
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
     "prettier": "3.3.3",
-    "tailwindcss": "^3.4.1",
     "prisma": "^5.18.0",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
 }
