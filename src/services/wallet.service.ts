@@ -109,6 +109,7 @@ export const verifyAndCreateKernelAccount = async (
 ) => {
   const { email, deployAccount } = payload;
 
+  // @ts-ignore
   const { subOrganizationId, walletAddress, smartContractAddress } =
     await getUserByEmail(email);
 
@@ -136,6 +137,7 @@ export const verifyAndCreateKernelAccount = async (
 };
 
 export const deploySmartContractAccount = async (email: string) => {
+  // @ts-ignore
   const { subOrganizationId, walletAddress } = await getUserByEmail(email);
 
   const { kernelAddress, success, reason } = await createKernelAccountAddress(
