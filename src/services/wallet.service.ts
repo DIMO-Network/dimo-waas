@@ -163,7 +163,7 @@ const createSubOrganization = async (
 ): Promise<{ subOrganizationId: string; walletAddress: string }> => {
   const { organizationIds } = await turnkeyClient.getSubOrgIds({
     filterType: "NAME",
-    filterValue: `DIMO ${userEmail} 11`,
+    filterValue: `DIMO ${userEmail}`,
   });
 
   if (organizationIds.length > 0) {
@@ -208,7 +208,7 @@ const createSubOrganization = async (
   };
 
   const subOrgPayload: TurnkeySDKApiTypes.TCreateSubOrganizationBody = {
-    subOrganizationName: `DIMO ${userEmail} 11`,
+    subOrganizationName: `DIMO ${userEmail}`,
     rootQuorumThreshold: 1,
     rootUsers: [dimoUser, endUser],
     wallet: {
