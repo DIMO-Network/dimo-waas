@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AccountCreateRequest } from "@/src/models/account";
 import { createOnChainAccount } from "@/src/services/wallet.service";
-import { checkUserRegistered } from "@/src/services/user.service";
+import { getUserByEmail } from "@/src/services/user.service";
 
 const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as AccountCreateRequest;
@@ -10,9 +10,9 @@ const POST = async (request: NextRequest) => {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
   }
 
-  const user = await checkUserRegistered(payload.email);
+  const user = await getUserByEmail(payload.email);
 
-  if (user.subOrganizationId) {
+  if (user) {
     return NextResponse.json(
       { error: "User already registered" },
       { status: 400 },

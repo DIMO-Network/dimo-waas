@@ -1,6 +1,6 @@
 import {
   AccountCreateRequest,
-  AccountCreateResponse,
+  UserRegisteredResponse,
 } from "@/src/models/account";
 import { TurnkeySDKApiTypes } from "@turnkey/sdk-server";
 import {
@@ -30,18 +30,139 @@ import {
   createKernelAccountClient,
   createZeroDevPaymasterClient,
 } from "@zerodev/sdk";
-import { upsertUser } from "@/src/services/user.service";
+import { getUserByEmail, upsertUser } from "@/src/services/user.service";
+import { EmailAuthRequest } from "@/src/models/auth";
 
+// Public functions
 export const createOnChainAccount = async (
   payload: AccountCreateRequest,
-): Promise<AccountCreateResponse> => {
-  const { organizationIds } = await turnkeyClient.getSubOrgIds({
-    filterType: "NAME",
-    filterValue: `DIMO ${payload.email}`,
+): Promise<UserRegisteredResponse> => {
+  const { email, deployAccount, attestation } = payload;
+
+  const { subOrganizationId, walletAddress } =
+    await createSubOrganization(email);
+
+  if (attestation) {
+    await createAuthenticator(payload, subOrganizationId);
+  }
+
+  let zeroDevAddress: string | null = null;
+  if (deployAccount) {
+    const { kernelAddress, success, reason } = await createKernelAccountAddress(
+      subOrganizationId,
+      walletAddress,
+    );
+
+    if (!success) {
+      throw new Error(reason);
+    }
+    zeroDevAddress = kernelAddress;
+    await removeDimoSigner(subOrganizationId, email);
+  }
+
+  await upsertUser({
+    email: payload.email,
+    subOrganizationId: subOrganizationId,
+    hasPasskey: !!payload.attestation,
+    walletAddress: walletAddress,
+    smartContractAddress: zeroDevAddress,
+    emailVerified: true,
   });
 
-  let organizationId: string;
-  let turnkeyAddress: string;
+  return {
+    subOrganizationId: subOrganizationId,
+    hasPasskey: !!payload.attestation,
+    walletAddress: walletAddress,
+    smartContractAddress: zeroDevAddress,
+    emailVerified: true,
+  };
+};
+
+export const createOrganizationAndSendEmail = async (
+  payload: EmailAuthRequest,
+): Promise<void> => {
+  const { email, redirectUrl, key, origin } = payload;
+
+  const { subOrganizationId, walletAddress } =
+    await createSubOrganization(email);
+
+  await turnkeyClient.emailAuth({
+    organizationId: subOrganizationId,
+    email: email,
+    targetPublicKey: key,
+    emailCustomization: {
+      appName: origin,
+      logoUrl: "https://explorer.dimo.zone/images/misc/dimo.svg",
+      magicLinkTemplate: `${redirectUrl}&token=%s`,
+    },
+  });
+
+  await upsertUser({
+    email: payload.email,
+    subOrganizationId: subOrganizationId,
+    walletAddress: walletAddress,
+  });
+};
+
+export const verifyAndCreateKernelAccount = async (
+  payload: AccountCreateRequest,
+) => {
+  const { email, deployAccount } = payload;
+
+  const { subOrganizationId, walletAddress, smartContractAddress } =
+    await getUserByEmail(email);
+
+  await createAuthenticator(payload, subOrganizationId);
+
+  let zeroDevAddress: string | null = null;
+  if (deployAccount && !smartContractAddress) {
+    const { kernelAddress, success, reason } = await createKernelAccountAddress(
+      subOrganizationId,
+      walletAddress,
+    );
+
+    if (!success) {
+      throw new Error(reason);
+    }
+    zeroDevAddress = kernelAddress;
+    await removeDimoSigner(subOrganizationId, email);
+  }
+
+  await upsertUser({
+    email: payload.email,
+    smartContractAddress: zeroDevAddress,
+    emailVerified: true,
+  });
+};
+
+export const deploySmartContractAccount = async (email: string) => {
+  const { subOrganizationId, walletAddress } = await getUserByEmail(email);
+
+  const { kernelAddress, success, reason } = await createKernelAccountAddress(
+    subOrganizationId,
+    walletAddress,
+  );
+
+  if (!success) {
+    throw new Error(reason);
+  }
+
+  await removeDimoSigner(subOrganizationId, email);
+
+  await upsertUser({
+    email: email,
+    smartContractAddress: kernelAddress,
+  });
+};
+
+// Private functions
+const createSubOrganization = async (
+  userEmail: string,
+): Promise<{ subOrganizationId: string; walletAddress: string }> => {
+  const { organizationIds } = await turnkeyClient.getSubOrgIds({
+    filterType: "NAME",
+    filterValue: `DIMO ${userEmail} 11`,
+  });
 
   if (organizationIds.length > 0) {
     const subOrganizationId = organizationIds[0];
@@ -55,46 +176,12 @@ export const createOnChainAccount = async (
       walletId: wallets[0].walletId,
     });
 
-    organizationId = subOrganizationId!;
-    const { address } = accounts[0];
-    turnkeyAddress = address;
-  } else {
-    const { subOrganizationId, wallet } = await createSubOrganization(
-      payload.email,
-    );
-
-    const { addresses } = wallet!;
-
-    turnkeyAddress = addresses[0];
-    organizationId = subOrganizationId;
+    return {
+      subOrganizationId: subOrganizationId!,
+      walletAddress: accounts[0].address,
+    };
   }
 
-  const { kernelAddress, success, reason } = await createKernelAccountAddress(
-    organizationId,
-    turnkeyAddress,
-  );
-
-  if (!success) {
-    throw new Error(reason);
-  }
-
-  await configureSubOrganization(payload, organizationId);
-
-  await upsertUser({
-    email: payload.email,
-    subOrganizationId: organizationId,
-    hasPasskey: !!payload.attestation,
-  });
-
-  return {
-    walletAddress: kernelAddress,
-    subOrganizationId: organizationId,
-  };
-};
-
-const createSubOrganization = async (
-  userEmail: string,
-): Promise<TurnkeySDKApiTypes.TCreateSubOrganizationResponse> => {
   const dimoUser: SubOrganizationRootUser = {
     userName: "DIMO USER",
     apiKeys: [
@@ -109,10 +196,19 @@ const createSubOrganization = async (
     userTags: [],
   };
 
+  const endUser: SubOrganizationRootUser = {
+    userName: userEmail,
+    userEmail: userEmail,
+    apiKeys: [],
+    authenticators: [],
+    oauthProviders: [],
+    userTags: [],
+  };
+
   const subOrgPayload: TurnkeySDKApiTypes.TCreateSubOrganizationBody = {
-    subOrganizationName: `DIMO ${userEmail}`,
+    subOrganizationName: `DIMO ${userEmail} 11`,
     rootQuorumThreshold: 1,
-    rootUsers: [dimoUser],
+    rootUsers: [dimoUser, endUser],
     wallet: {
       walletName: "Default wallet",
       accounts: [
@@ -126,7 +222,13 @@ const createSubOrganization = async (
     },
   };
 
-  return await turnkeyClient.createSubOrganization(subOrgPayload);
+  const { subOrganizationId, wallet } =
+    await turnkeyClient.createSubOrganization(subOrgPayload);
+
+  return {
+    subOrganizationId: subOrganizationId,
+    walletAddress: wallet!.addresses[0],
+  };
 };
 
 const createKernelAccountAddress = async (
@@ -210,43 +312,59 @@ const createKernelAccountAddress = async (
   };
 };
 
-const configureSubOrganization = async (
+const createAuthenticator = async (
   payload: AccountCreateRequest,
   organizationId: string,
-) => {
-  const { userTagId } = await turnkeyClient.createUserTag({
+): Promise<void> => {
+  const { email, encodedChallenge, attestation } = payload;
+
+  const { users } = await turnkeyClient.getUsers({
     organizationId: organizationId,
-    userTagName: "END USER TAG",
-    userIds: [],
   });
-  const endUser: SubOrganizationRootUser = {
-    userName: payload.email,
-    userEmail: payload.email,
-    apiKeys: [],
-    authenticators: [],
-    oauthProviders: [],
-    userTags: [userTagId],
-  };
 
-  if (payload.attestation) {
-    const authenticator: RootUserAuthenticator = {
-      authenticatorName: "PASSKEY",
-      challenge: payload.encodedChallenge!,
-      attestation: payload.attestation!,
-    };
+  const endUser = users.find((user) => user.userName === email);
 
-    endUser.authenticators.push(authenticator);
+  if (!endUser) {
+    throw new Error("User not found");
   }
 
-  const { userIds } = await turnkeyClient.createUsers({
+  const { userId } = endUser;
+
+  const authenticator: RootUserAuthenticator = {
+    authenticatorName: "DIMO PASSKEY",
+    challenge: encodedChallenge!,
+    attestation: attestation!,
+  };
+
+  await turnkeyClient.createAuthenticators({
     organizationId: organizationId,
-    users: [endUser],
+    userId: userId,
+    authenticators: [authenticator],
   });
+
+  await upsertUser({
+    email: email,
+    hasPasskey: true,
+  });
+};
+
+const removeDimoSigner = async (organizationId: string, email: string) => {
+  const { users } = await turnkeyClient.getUsers({
+    organizationId: organizationId,
+  });
+
+  const endUser = users.find((user) => user.userName === email);
+
+  if (!endUser) {
+    throw new Error("User not found");
+  }
+
+  const { userId } = endUser;
 
   await turnkeyClient.updateRootQuorum({
     organizationId: organizationId,
     threshold: 1,
-    userIds: userIds,
+    userIds: [userId],
   });
 };
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { UserRegisteredRequest } from "@/src/models/account";
-import { checkUserRegistered } from "@/src/services/user.service";
+import { getUserByEmail } from "@/src/services/user.service";
 
 const GET = async (
   _: NextRequest,
@@ -14,13 +14,13 @@ const GET = async (
 
   console.info(`Checking user registration for ${email}`);
 
-  const response = await checkUserRegistered(email);
+  const user = await getUserByEmail(email);
 
-  if (!response) {
+  if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json(response);
+  return NextResponse.json(user);
 };
 
 export { GET };
