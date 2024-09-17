@@ -325,12 +325,31 @@ const createAuthenticator = async (
   });
 
   const endUser = users.find((user) => user.userName === email);
+  const dimoUser = users.find((user) => user.userName !== email);
 
   if (!endUser) {
     throw new Error("User not found");
   }
 
   const { userId } = endUser;
+  const { userId: dimoUserId } = dimoUser;
+
+  await turnkeyClient.updateRootQuorum({
+    organizationId: organizationId,
+    threshold: 1,
+    userIds: [dimoUserId],
+  });
+
+  await turnkeyClient.deleteUsers({
+    organizationId: organizationId,
+    userIds: [userId],
+  });
+
+  const { userTagId } = await turnkeyClient.createUserTag({
+    organizationId: organizationId,
+    userTagName: "END USER TAG",
+    userIds: [],
+  });
 
   const authenticator: RootUserAuthenticator = {
     authenticatorName: "DIMO PASSKEY",
@@ -338,10 +357,18 @@ const createAuthenticator = async (
     attestation: attestation!,
   };
 
-  await turnkeyClient.createAuthenticators({
-    organizationId: organizationId,
-    userId: userId,
+  const newEndUser: SubOrganizationRootUser = {
+    userName: payload.email,
+    userEmail: payload.email,
+    apiKeys: [],
     authenticators: [authenticator],
+    oauthProviders: [],
+    userTags: [userTagId],
+  };
+
+  await turnkeyClient.createUsers({
+    organizationId: organizationId,
+    users: [newEndUser],
   });
 
   await upsertUser({
