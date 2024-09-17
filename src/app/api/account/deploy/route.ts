@@ -7,7 +7,7 @@ const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as UserRegisteredRequest;
 
   if (!payload) {
-    return { error: "No payload provided" };
+    return NextResponse.json({ error: "No payload provided" }, { status: 400 });
   }
 
   const { email } = payload;
