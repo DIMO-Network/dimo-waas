@@ -3,4 +3,5 @@ export interface EmailAuthRequest {
   origin: string;
   key: string;
   redirectUrl: string;
+  deployAccount?: boolean;
 }

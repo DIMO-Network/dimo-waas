@@ -13,18 +13,26 @@ export interface AccountCreateRequest {
       | "AUTHENTICATOR_TRANSPORT_HYBRID"
     )[];
   };
-}
-
-export interface AccountCreateResponse {
-  subOrganizationId: string;
-  walletAddress: string;
+  deployAccount?: boolean;
 }
 
 export interface UserRegisteredResponse {
-  subOrganizationId?: string;
-  hasPasskey?: boolean;
+  subOrganizationId: string | null;
+  hasPasskey: boolean;
+  smartContractAddress: string | null;
+  walletAddress: string | null;
+  emailVerified: boolean;
 }
 
 export interface UserRegisteredRequest {
   email: string;
+}
+
+export interface User {
+  email: string;
+  subOrganizationId?: string | null;
+  hasPasskey?: boolean;
+  smartContractAddress?: string | null;
+  walletAddress?: string | null;
+  emailVerified?: boolean;
 }

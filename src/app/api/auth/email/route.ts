@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { EmailAuthRequest } from "@/src/models/auth";
-import { checkUserRegistered } from "@/src/services/user.service";
+import { getUserByEmail } from "@/src/services/user.service";
 import { turnkeyClient } from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
@@ -12,7 +12,7 @@ const POST = async (request: NextRequest) => {
 
   const { email, redirectUrl, key, origin } = payload;
 
-  const user = await checkUserRegistered(email);
+  const user = await getUserByEmail(email);
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -22,7 +22,7 @@ const POST = async (request: NextRequest) => {
 
   // TODO: need to move this to a service, and set the correct logoUrl
   await turnkeyClient.emailAuth({
-    organizationId: subOrganizationId,
+    organizationId: subOrganizationId!,
     email: email,
     targetPublicKey: key,
     emailCustomization: {

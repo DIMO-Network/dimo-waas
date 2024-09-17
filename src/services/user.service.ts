@@ -1,9 +1,9 @@
-import { UserRegisteredResponse } from "@/src/models/account";
+import { User, UserRegisteredResponse } from "@/src/models/account";
 import { PrismaClient } from "@prisma/client";
 
-export const checkUserRegistered = async (
+export const getUserByEmail = async (
   email: string,
-): Promise<UserRegisteredResponse> => {
+): Promise<UserRegisteredResponse | null> => {
   const prismaClient = new PrismaClient();
   try {
     const user = await prismaClient.user.findUnique({
@@ -13,23 +13,22 @@ export const checkUserRegistered = async (
     });
 
     if (!user) {
-      return {};
+      return null;
     }
 
     return {
       subOrganizationId: user.subOrganizationId,
       hasPasskey: user.hasPasskey,
+      emailVerified: user.emailVerified,
+      walletAddress: user.walletAddress,
+      smartContractAddress: user.smartContractAddress,
     };
   } finally {
     prismaClient.$disconnect();
   }
 };
 
-export const upsertUser = async (user: {
-  email: string;
-  subOrganizationId: string;
-  hasPasskey: boolean;
-}) => {
+export const upsertUser = async (user: User) => {
   const prismaClient = new PrismaClient();
   try {
     await prismaClient.user.upsert({
@@ -37,13 +36,10 @@ export const upsertUser = async (user: {
         email: user.email,
       },
       update: {
-        subOrganizationId: user.subOrganizationId,
-        hasPasskey: user.hasPasskey,
+        ...user,
       },
       create: {
-        email: user.email,
-        subOrganizationId: user.subOrganizationId,
-        hasPasskey: user.hasPasskey,
+        ...user,
       },
     });
   } finally {
