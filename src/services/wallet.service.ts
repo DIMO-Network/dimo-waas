@@ -332,6 +332,7 @@ const createAuthenticator = async (
   }
 
   const { userId } = endUser;
+  // @ts-ignore
   const { userId: dimoUserId } = dimoUser;
 
   await turnkeyClient.updateRootQuorum({
