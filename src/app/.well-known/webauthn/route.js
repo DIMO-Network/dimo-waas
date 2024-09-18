@@ -6,12 +6,10 @@ export async function GET() {
         crossOrigins.push('http://localhost:3000');
     }
 
-    const data = [
-        {
-            origins: [
-                ...crossOrigins
-            ]
-        },
-    ];
+    const data = {
+        origins: [
+            ...crossOrigins
+        ]
+    };
     return Response.json(data);
 }
