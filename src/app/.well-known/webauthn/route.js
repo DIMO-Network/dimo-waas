@@ -7,9 +7,7 @@ export async function GET() {
     }
 
     const data = {
-        origins: [
-            ...crossOrigins
-        ]
+        origins: crossOrigins
     };
     return Response.json(data);
 }
