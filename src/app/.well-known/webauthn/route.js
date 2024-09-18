@@ -1,9 +1,9 @@
 export async function GET() {
-    const crossOrigins = [];
-    const { VERCEL_ENV: environment } = process.env;
+    let crossOrigins = [];
+    const { NEXT_PUBLIC_CROSS_ORIGINS: crossOriginUrl } = process.env;
 
-    if (environment !== 'production') {
-        crossOrigins.push('http://localhost:3000');
+    if (crossOriginUrl) {
+        crossOrigins = crossOriginUrl.split(',').map(url => url.trim()).filter(url => url);
     }
 
     const data = {
