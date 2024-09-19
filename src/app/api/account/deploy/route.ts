@@ -31,9 +31,9 @@ const POST = async (request: NextRequest) => {
     );
   }
 
-  await deploySmartContractAccount(email);
+  const deployedUserData = await deploySmartContractAccount(email);
 
-  return NextResponse.json(null, { status: 204 });
+  return NextResponse.json(deployedUserData, { status: 204 });
 };
 
 export { POST };

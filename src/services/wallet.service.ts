@@ -136,7 +136,7 @@ export const verifyAndCreateKernelAccount = async (
   });
 };
 
-export const deploySmartContractAccount = async (email: string) => {
+export const deploySmartContractAccount = async (email: string) : Promise<UserRegisteredResponse> => {
   // @ts-ignore
   const { subOrganizationId, walletAddress } = await getUserByEmail(email);
 
@@ -155,6 +155,9 @@ export const deploySmartContractAccount = async (email: string) => {
     email: email,
     smartContractAddress: kernelAddress,
   });
+
+  const user = await getUserByEmail(email);
+  return user!;
 };
 
 // Private functions
