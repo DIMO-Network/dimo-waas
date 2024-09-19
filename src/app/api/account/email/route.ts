@@ -22,14 +22,6 @@ const POST = async (request: NextRequest) => {
     return NextResponse.json({ error: "No key provided" }, { status: 400 });
   }
 
-  if (!origin) {
-    return NextResponse.json({ error: "No origin provided" }, { status: 400 });
-  }
-
-  if (!redirectUrl) {
-    return NextResponse.json({ error: "No redirectUrl provided" }, { status: 400 });
-  }
-
   const user = await getUserByEmail(email);
 
   if (user) {

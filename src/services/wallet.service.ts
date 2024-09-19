@@ -81,7 +81,7 @@ export const createOnChainAccount = async (
 export const createOrganizationAndSendEmail = async (
   payload: EmailAuthRequest,
 ): Promise<void> => {
-  const { email, redirectUrl, key, origin } = payload;
+  const { email, key } = payload;
 
   const { subOrganizationId, walletAddress } =
     await createSubOrganization(email);
@@ -90,11 +90,6 @@ export const createOrganizationAndSendEmail = async (
     organizationId: subOrganizationId,
     email: email,
     targetPublicKey: key,
-    emailCustomization: {
-      appName: origin,
-      logoUrl: "https://explorer.dimo.zone/images/misc/dimo.svg",
-      magicLinkTemplate: `${redirectUrl}&token=%s`,
-    },
   });
 
   await upsertUser({
