@@ -36,7 +36,8 @@ const POST = async (request: NextRequest) => {
 
   await verifyAndCreateKernelAccount(payload);
 
-  return NextResponse.json(null, { status: 204 });
+  // this is so vercel doesn't complain about not returning a response
+  return new Response(null, { status: 204 });
 };
 
 export { POST };
