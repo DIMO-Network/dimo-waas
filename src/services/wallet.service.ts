@@ -131,7 +131,9 @@ export const verifyAndCreateKernelAccount = async (
   });
 };
 
-export const deploySmartContractAccount = async (email: string) : Promise<UserRegisteredResponse> => {
+export const deploySmartContractAccount = async (
+  email: string,
+): Promise<UserRegisteredResponse> => {
   // @ts-ignore
   const { subOrganizationId, walletAddress } = await getUserByEmail(email);
 
@@ -344,11 +346,7 @@ const createAuthenticator = async (
     userIds: [userId],
   });
 
-  const { userTagId } = await turnkeyClient.createUserTag({
-    organizationId: organizationId,
-    userTagName: "END USER TAG",
-    userIds: [],
-  });
+  const userTagId = await getUserTag(organizationId);
 
   const authenticator: RootUserAuthenticator = {
     authenticatorName: "DIMO PASSKEY",
@@ -374,6 +372,24 @@ const createAuthenticator = async (
     email: email,
     hasPasskey: true,
   });
+};
+
+const getUserTag = async (organizationId: string): Promise<string> => {
+  const { userTags } = await turnkeyClient.getUserTags({
+    organizationId: organizationId,
+  });
+
+  if (userTags.length > 0) {
+    return userTags[0];
+  }
+
+  const { userTagId } = await turnkeyClient.createUserTag({
+    organizationId: organizationId,
+    userTagName: "END USER TAG",
+    userIds: [],
+  });
+
+  return userTagId;
 };
 
 const removeDimoSigner = async (organizationId: string, email: string) => {

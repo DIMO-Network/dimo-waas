@@ -12,7 +12,6 @@ const POST = async (request: NextRequest) => {
 
   const { email, key, origin, redirectUrl } = payload;
 
-
   //TODO: make this a function to validate the payload
   if (!email) {
     return NextResponse.json({ error: "No email provided" }, { status: 400 });
