@@ -374,12 +374,12 @@ const createAuthenticator = async (
 };
 
 const getUserTag = async (organizationId: string): Promise<string> => {
-  const { userTags } = await turnkeyClient.getUserTags({
+  const { userTags } = await turnkeyClient.listUserTags({
     organizationId: organizationId,
   });
 
   if (userTags.length > 0) {
-    return userTags[0];
+    return userTags[0].tagId;
   }
 
   const { userTagId } = await turnkeyClient.createUserTag({
