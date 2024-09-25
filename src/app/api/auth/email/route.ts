@@ -25,11 +25,6 @@ const POST = async (request: NextRequest) => {
     organizationId: subOrganizationId!,
     email: email,
     targetPublicKey: key,
-    emailCustomization: {
-      appName: `DIMO ${origin}`,
-      logoUrl: "https://explorer.dimo.zone/images/misc/dimo.svg",
-      magicLinkTemplate: `${redirectUrl}&token=%s`,
-    },
   });
 
   // this is so vercel doesn't complain about not returning a response
