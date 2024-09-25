@@ -327,15 +327,6 @@ const createAuthenticator = async (
   const endUser = users.find((user) => user.userName === email);
   const dimoUser = users.find((user) => user.userName !== email);
 
-  if (endUser) {
-    const { userId } = endUser;
-
-    await turnkeyClient.deleteUsers({
-      organizationId: organizationId,
-      userIds: [userId],
-    });
-  }
-
   // @ts-ignore
   const { userId: dimoUserId } = dimoUser;
 
@@ -344,6 +335,15 @@ const createAuthenticator = async (
     threshold: 1,
     userIds: [dimoUserId],
   });
+
+  if (endUser) {
+    const { userId } = endUser;
+
+    await turnkeyClient.deleteUsers({
+      organizationId: organizationId,
+      userIds: [userId],
+    });
+  }
 
   const userTagId = await getUserTag(organizationId);
 
