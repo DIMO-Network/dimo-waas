@@ -39,15 +39,19 @@ export const createOnChainAccount = async (
 ): Promise<UserRegisteredResponse> => {
   const { email, deployAccount, attestation } = payload;
 
+  console.info("Creating account for", email);
+  console.info("Check organization and wallet address");
   const { subOrganizationId, walletAddress } =
     await createSubOrganization(email);
 
   if (attestation) {
+    console.info("Creating passkey for user");
     await createAuthenticator(payload, subOrganizationId);
   }
 
   let zeroDevAddress: string | null = null;
   if (deployAccount) {
+    console.info("Creating kernel account");
     const { kernelAddress, success, reason } = await createKernelAccountAddress(
       subOrganizationId,
       walletAddress,
@@ -57,9 +61,12 @@ export const createOnChainAccount = async (
       throw new Error(reason);
     }
     zeroDevAddress = kernelAddress;
+
+    console.info("Removing DIMO signer");
     await removeDimoSigner(subOrganizationId, email);
   }
 
+    console.info("Upserting user");
   await upsertUser({
     email: payload.email,
     subOrganizationId: subOrganizationId,
@@ -69,6 +76,7 @@ export const createOnChainAccount = async (
     emailVerified: true,
   });
 
+    console.info("User created");
   return {
     subOrganizationId: subOrganizationId,
     hasPasskey: !!payload.attestation,
