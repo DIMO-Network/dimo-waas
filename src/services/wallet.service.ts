@@ -43,10 +43,12 @@ export const createOnChainAccount = async (
   console.info("Check organization and wallet address");
   const { subOrganizationId, walletAddress } =
     await createSubOrganization(email);
+  console.info("user organization with id", subOrganizationId);
 
   if (attestation) {
     console.info("Creating passkey for user");
     await createAuthenticator(payload, subOrganizationId);
+    console.info("Passkey created");
   }
 
   let zeroDevAddress: string | null = null;
@@ -60,10 +62,15 @@ export const createOnChainAccount = async (
     if (!success) {
       throw new Error(reason);
     }
+
+    console.info("Kernel account created");
+
     zeroDevAddress = kernelAddress;
 
     console.info("Removing DIMO signer");
     await removeDimoSigner(subOrganizationId, email);
+
+    console.info("DIMO signer removed");
   }
 
     console.info("Upserting user");
@@ -75,6 +82,8 @@ export const createOnChainAccount = async (
     smartContractAddress: zeroDevAddress,
     emailVerified: true,
   });
+
+  console.info("User upserted");
 
     console.info("User created");
   return {
@@ -136,6 +145,7 @@ export const verifyAndCreateKernelAccount = async (
     email: payload.email,
     smartContractAddress: zeroDevAddress,
     emailVerified: true,
+    hasPasskey: true,
   });
 };
 
@@ -374,11 +384,6 @@ const createAuthenticator = async (
   await turnkeyClient.createUsers({
     organizationId: organizationId,
     users: [newEndUser],
-  });
-
-  await upsertUser({
-    email: email,
-    hasPasskey: true,
   });
 };
 
