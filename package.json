@@ -14,10 +14,10 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "@sentry/nextjs": "^8.32.0",
-    "@turnkey/ethers": "^1.1.1",
+    "@turnkey/ethers": "^1.0.16",
     "@turnkey/http": "^2.12.1",
     "@turnkey/sdk-server": "^1.2.1",
-    "@turnkey/viem": "^0.4.31",
+    "@turnkey/viem": "^0.4.26",
     "@zerodev/ecdsa-validator": "^5.3.3",
     "@zerodev/sdk": "^5.3.19",
     "next": "^14.2.13",
