@@ -15,12 +15,16 @@ export interface EmailRecoveryRequest {
 }
 
 export interface PasskeyRecoveryRequest {
-  signedRecoveryRequest: {
-    url: string;
-    body: string;
-    stamp: TurnkeyStamp;
-  }
+  signedRecoveryRequest: IStampedRequest;
+  signedAuthenticatorRemoval: IStampedRequest;
 }
+
+export interface IStampedRequest {
+  url: string;
+  body: string;
+  stamp: TurnkeyStamp;
+}
+
 
 export interface TurnkeyStamp {
   stampHeaderName: string;

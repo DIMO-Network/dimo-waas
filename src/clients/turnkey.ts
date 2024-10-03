@@ -1,6 +1,6 @@
 import {ApiKeyStamper, TurnkeySDKApiTypes, TurnkeyServerClient} from "@turnkey/sdk-server";
 import { TurnkeyClient } from "@turnkey/http";
-import {TurnkeyStamp} from "@/src/models/auth";
+import {IStampedRequest, TurnkeyStamp} from "@/src/models/auth";
 
 const {
   TURNKEY_API_PRIVATE_KEY,
@@ -45,14 +45,20 @@ export const bundleRpc = BUNDLER_RPC!;
 export const paymasterRpc = PAYMASTER_RPC!;
 export const dimoApiPublicKey = TURNKEY_API_PUBLIC_KEY!;
 
-export const forwardSignedActivity = async (url: string, body: string, stamp: TurnkeyStamp) => {
-    const delay = 200 * 1000;
+export const forwardSignedActivity = async (stampedRequest: IStampedRequest) => {
+    const delay = 1000;
     const maxAttempts = 5;
+
+    const { url, body, stamp } = stampedRequest;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
         await new Promise((resolve) => setTimeout(resolve, delay*(attempt+1)));
 
         const { status, responseBody } = await forwardSignedRequest(url, body, stamp);
+
+        console.info(`Forwarded activity attempt ${attempt+1} with status ${status}`);
+        console.info("And response body", responseBody);
+
         if (status !== 200) {
             throw new Error(`Failed to forward signed request: ${status}`);
         }
@@ -87,7 +93,7 @@ const forwardSignedRequest = async (url: string, body: string, stamp: TurnkeySta
             'Content-Type': 'application/json',
             [stamp.stampHeaderName]: stamp.stampHeaderValue,
         },
-        body: JSON.stringify(body)
+        body: body
     });
 
     const responseBody = await response.json();

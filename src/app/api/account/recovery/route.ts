@@ -40,15 +40,19 @@ const PUT = async (request: NextRequest) => {
         return NextResponse.json({error: "No payload provided"}, {status: 400});
     }
 
-    const { signedRecoveryRequest } = payload;
+    const { signedRecoveryRequest, signedAuthenticatorRemoval } = payload;
 
     if (!signedRecoveryRequest) {
         return NextResponse.json({ error: "No signed recovery request provided" }, { status: 400 });
     }
 
-    const { url, body, stamp } = signedRecoveryRequest;
+    if (!signedAuthenticatorRemoval) {
+        return NextResponse.json({ error: "No signed authenticator removal request provided" }, { status: 400 });
+    }
 
-    await forwardSignedActivity(url, body, stamp);
+    await forwardSignedActivity(signedAuthenticatorRemoval);
+
+    await forwardSignedActivity(signedRecoveryRequest);
 
     return new Response(null, { status: 204 });
 };
