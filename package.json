@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sentry/nextjs": "^7.114.0",
+    "@sentry/nextjs": "^8.33.1",
     "@turnkey/sdk-react": "^0.2.1",
     "@turnkey/sdk-server": "^0.2.0",
     "next": "14.2.3",
