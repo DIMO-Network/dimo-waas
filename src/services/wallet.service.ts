@@ -258,7 +258,6 @@ const createKernelAccountAddress = async (
   const chain = getChain();
 
   const localAccount = await createAccount({
-    // @ts-ignore
     client: stamperClient,
     organizationId: organizationId,
     signWith: turnkeyAddress,
