@@ -257,6 +257,7 @@ const createKernelAccountAddress = async (
 ): Promise<KernelAccountProcess> => {
   const chain = getChain();
 
+  console.info("Creating account for", turnkeyAddress);
   const localAccount = await createAccount({
     client: stamperClient,
     organizationId: organizationId,
@@ -264,25 +265,37 @@ const createKernelAccountAddress = async (
     ethereumAddress: turnkeyAddress,
   });
 
+    console.info("Account created");
+
+    console.info("Creating smart account client");
+
   const smartAccountClient = createWalletClient({
     account: localAccount,
     chain: chain,
     transport: http(bundleRpc),
   });
 
+    console.info("Smart account client created");
+
   const smartAccountSigner =
     walletClientToSmartAccountSigner(smartAccountClient);
+
+    console.info("Creating public client for chain");
 
   const publicClient = createPublicClient({
     chain: chain,
     transport: http(bundleRpc),
   });
 
+    console.info("Creating ecdsa validator");
+
   const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
     signer: smartAccountSigner,
     entryPoint: ENTRYPOINT_ADDRESS_V07,
     kernelVersion: KERNEL_V3_1,
   });
+
+  console.info("Creating kernel account");
 
   const zeroDevKernelAccount = await createKernelAccount(publicClient, {
     plugins: {
@@ -292,6 +305,9 @@ const createKernelAccountAddress = async (
     kernelVersion: KERNEL_V3_1,
   });
 
+    console.info("Kernel account created");
+
+    console.info("Creating kernel client");
   const kernelClient = createKernelAccountClient({
     account: zeroDevKernelAccount,
     chain: chain,
@@ -304,11 +320,14 @@ const createKernelAccountAddress = async (
 
   const { address: kernelAddress } = zeroDevKernelAccount;
 
+  console.info("Creating call data");
   const callData = await kernelClient.account.encodeCallData({
     to: kernelAddress,
     value: BigInt(0),
     data: "0x",
   });
+
+    console.info("Sending user operation");
 
   const transaction = await kernelClient.sendUserOperation({
     userOperation: {
@@ -316,10 +335,13 @@ const createKernelAccountAddress = async (
     },
   });
 
+    console.info("User operation sent");
+
   const bundlerClient = kernelClient.extend(
-    // @ts-ignore
     bundlerActions(ENTRYPOINT_ADDRESS_V07),
   );
+
+    console.info("Waiting for user operation receipt");
 
   // TODO: check if this is really necessary
   const { success, reason } = await bundlerClient.waitForUserOperationReceipt({
