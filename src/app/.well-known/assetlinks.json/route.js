@@ -15,15 +15,16 @@ export async function GET() {
   ];
   if (crossOriginUrl) {
     const crossOrigins = crossOriginUrl
-        .split(",")
-        .map((url) => url.trim())
-        .filter((url) => url).map((url) => ({
-            relation: ["delegate_permission/common.get_login_creds",],
-            target: {
-                namespace: "web",
-                site: url,
-            },
-        }));
+      .split(",")
+      .map((url) => url.trim())
+      .filter((url) => url)
+      .map((url) => ({
+        relation: ["delegate_permission/common.get_login_creds"],
+        target: {
+          namespace: "web",
+          site: url,
+        },
+      }));
 
     data.push(...crossOrigins);
   }

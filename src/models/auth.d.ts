@@ -25,7 +25,6 @@ export interface IStampedRequest {
   stamp: TurnkeyStamp;
 }
 
-
 export interface TurnkeyStamp {
   stampHeaderName: string;
   stampHeaderValue: string;
