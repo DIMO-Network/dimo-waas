@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { EmailAuthRequest } from "@/src/models/auth";
 import { getUserByEmail } from "@/src/services/user.service";
-import { turnkeyClient } from "@/src/clients/turnkey";
+import { turnkeySupportClient} from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as EmailAuthRequest;
@@ -21,7 +21,7 @@ const POST = async (request: NextRequest) => {
   const { subOrganizationId } = user;
 
   // TODO: need to move this to a service, and set the correct logoUrl
-  await turnkeyClient.emailAuth({
+  await turnkeySupportClient.emailAuth({
     organizationId: subOrganizationId!,
     email: email,
     targetPublicKey: key,
