@@ -45,10 +45,9 @@ const POST = async (request: NextRequest) => {
     return NextResponse.json({ error: "User already exists" }, { status: 400 });
   }
 
-  await createOrganizationAndSendEmail(payload);
+  const otpId = await createOrganizationAndSendEmail(payload);
 
-  // this is so vercel doesn't complain about not returning a response
-  return new Response(null, { status: 204 });
+  return NextResponse.json({ otpId }, { status: 201 });
 };
 
 export { POST };

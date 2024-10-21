@@ -34,8 +34,7 @@ const POST = async (request: NextRequest) => {
     otpType: "OTP_TYPE_EMAIL",
     contact: email,
     emailCustomization: {
-      appName: "https://dimo.org",
-      magicLinkTemplate: `${redirectUrl}&token=%s`,
+      appName: "DIMO",
     },
   });
   const otpId = initResponse.otpId;
@@ -44,7 +43,7 @@ const POST = async (request: NextRequest) => {
     throw new Error("Expected non-null values for otpId.");
   }
 
-  return Response.json({ otpId }, { status: 201 });
+  return NextResponse.json({ otpId }, { status: 201 });
 };
 
 const PUT = async (request: NextRequest) => {

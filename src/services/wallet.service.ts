@@ -13,7 +13,7 @@ import {
   dimoApiPublicKey,
   paymasterRpc,
   stamperClient,
-  turnkeyClient,
+  turnkeyClient, turnkeySupportClient,
 } from "@/src/clients/turnkey";
 import { createAccount } from "@turnkey/viem";
 import { Chain, createPublicClient, createWalletClient, http } from "viem";
@@ -80,34 +80,60 @@ export const createOnChainAccount = async (
 
 export const createOrganizationAndSendEmail = async (
   payload: EmailAuthRequest,
-): Promise<void> => {
-  const { email, key } = payload;
+): Promise<string> => {
+  const { email, key, origin } = payload;
 
   const { subOrganizationId, walletAddress } =
     await createSubOrganization(email);
 
-  await turnkeyClient.emailAuth({
+  const { otpId } = await turnkeyClient.initOtpAuth({
     organizationId: subOrganizationId,
-    email: email,
-    targetPublicKey: key,
-    invalidateExisting: true,
+    contact: email,
+    otpType: "OTP_TYPE_EMAIL",
+    emailCustomization: {
+      appName: origin,
+    },
   });
+
+  if (!otpId) {
+    throw new Error("Expected non-null values for otpId.");
+  }
 
   await upsertUser({
     email: payload.email,
     subOrganizationId: subOrganizationId,
     walletAddress: walletAddress,
   });
+
+  return otpId;
 };
 
 export const verifyAndCreateKernelAccount = async (
   payload: AccountCreateRequest,
 ) => {
-  const { email, deployAccount } = payload;
+  const { email, deployAccount, otpId, otpCode, key } = payload;
 
   // @ts-ignore
   const { subOrganizationId, walletAddress, smartContractAddress } =
     await getUserByEmail(email);
+
+  const otpAuthResponse = await turnkeySupportClient.otpAuth({
+    organizationId: subOrganizationId!,
+    otpId: otpId!,
+    otpCode: otpCode!,
+    targetPublicKey: key,
+    apiKeyName: "OTP Key",
+    expirationSeconds: "900",
+    invalidateExisting: true,
+  });
+
+  const { credentialBundle, apiKeyId, userId } = otpAuthResponse;
+
+  if (!credentialBundle || !apiKeyId || !userId) {
+    throw new Error(
+        "Expected non-null values for credentialBundle, apiKeyId, and userId."
+    );
+  }
 
   await createAuthenticator(payload, subOrganizationId);
 
