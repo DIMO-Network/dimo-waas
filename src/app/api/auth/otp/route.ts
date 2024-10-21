@@ -89,7 +89,7 @@ const POST = async (request: NextRequest) => {
     throw new Error("Expected non-null values for otpId.");
   }
 
-  return Response.json({ otpId }, { status: 201 });
+  return NextResponse.json({ otpId }, { status: 201 });
 };
 
 const PUT = async (request: NextRequest) => {

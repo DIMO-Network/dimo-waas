@@ -1,5 +1,8 @@
 export interface AccountCreateRequest {
   email: string;
+  otpId?: string;
+  otpCode?: string;
+  key?: string;
   encodedChallenge?: string;
   attestation?: {
     credentialId: string;
