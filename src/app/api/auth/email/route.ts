@@ -18,6 +18,10 @@ const POST = async (request: NextRequest) => {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
+  if (!user.emailVerified) {
+    return NextResponse.json({ error: "User email not verified" }, { status: 400 });
+  }
+
   const { subOrganizationId } = user;
 
   // TODO: need to move this to a service, and set the correct logoUrl
