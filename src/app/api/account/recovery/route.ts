@@ -37,11 +37,8 @@ const POST = async (request: NextRequest) => {
     },
   });
 
-<<<<<<< HEAD
-=======
   console.info("Recovery initiated.", payload);
 
->>>>>>> staging
   // this is so vercel doesn't complain about not returning a response
   return new Response(null, { status: 204 });
 };
@@ -73,10 +70,7 @@ const PUT = async (request: NextRequest) => {
 
   await forwardSignedActivity(signedRecoveryRequest);
 
-<<<<<<< HEAD
-=======
   console.info("Recovery complete.", payload);
->>>>>>> staging
   return new Response(null, { status: 204 });
 };
 

@@ -1,13 +1,11 @@
-
-
 export enum OtpType {
-  SMS = 'OTP_TYPE_SMS',
-  EMAIL = 'OTP_TYPE_EMAIL',
+  SMS = "OTP_TYPE_SMS",
+  EMAIL = "OTP_TYPE_EMAIL",
 }
 
 export interface CodeDeliveryRequest {
   email: string;
-  otpType: OtpType.EMAIL
+  otpType: OtpType.EMAIL;
   redirectUrl: string;
 }
 export interface CodeAuthenticationRequest {

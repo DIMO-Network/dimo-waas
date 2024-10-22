@@ -9,7 +9,6 @@ import { turnkeySupportClient } from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as CodeDeliveryRequest;
-  
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
@@ -24,14 +23,13 @@ const POST = async (request: NextRequest) => {
   }
 
   if (!user.emailVerified) {
-    return NextResponse.json({ error: "User email not verified" }, { status: 400 });
+    return NextResponse.json(
+      { error: "User email not verified" },
+      { status: 400 },
+    );
   }
 
   const { subOrganizationId } = user;
-<<<<<<< HEAD
-
-=======
->>>>>>> staging
   // TODO: need to move this to a service, and set the correct logoUrl
   const initResponse = await turnkeySupportClient.initOtpAuth({
     organizationId: subOrganizationId!,
@@ -43,19 +41,12 @@ const POST = async (request: NextRequest) => {
     },
   });
   const otpId = initResponse.otpId;
-<<<<<<< HEAD
-=======
   console.info("Sent otp request to email and otpId", email, otpId);
->>>>>>> staging
   if (!otpId) {
     throw new Error("Expected non-null values for otpId.");
   }
 
-<<<<<<< HEAD
-  return Response.json({ otpId }, { status: 204 });
-=======
   return Response.json({ otpId }, { status: 201 });
->>>>>>> staging
 };
 
 const PUT = async (request: NextRequest) => {
@@ -67,11 +58,8 @@ const PUT = async (request: NextRequest) => {
 
   const { email, otpId, otpCode, key } = payload;
 
-<<<<<<< HEAD
-=======
   console.info("Received request to login with otpcode.", email, otpId);
 
->>>>>>> staging
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -79,7 +67,10 @@ const PUT = async (request: NextRequest) => {
   }
 
   if (!user.emailVerified) {
-    return NextResponse.json({ error: "User email not verified" }, { status: 400 });
+    return NextResponse.json(
+      { error: "User email not verified" },
+      { status: 400 },
+    );
   }
 
   const { subOrganizationId } = user;
@@ -95,14 +86,10 @@ const PUT = async (request: NextRequest) => {
   });
 
   const { credentialBundle, apiKeyId, userId } = otpAuthResponse;
-<<<<<<< HEAD
-
-=======
   console.info("Returning bundle to user.", email, apiKeyId, userId);
->>>>>>> staging
   if (!credentialBundle || !apiKeyId || !userId) {
     throw new Error(
-      "Expected non-null values for credentialBundle, apiKeyId, and userId."
+      "Expected non-null values for credentialBundle, apiKeyId, and userId.",
     );
   }
 

@@ -35,14 +35,9 @@ const POST = async (request: NextRequest) => {
     );
   }
 
-<<<<<<< HEAD
-  await verifyAndCreateKernelAccount(payload);
-
-=======
   const kernelAddress = await verifyAndCreateKernelAccount(payload);
 
   console.info("Verified account and AA deployed.", kernelAddress);
->>>>>>> staging
   // this is so vercel doesn't complain about not returning a response
   return new Response(null, { status: 204 });
 };
