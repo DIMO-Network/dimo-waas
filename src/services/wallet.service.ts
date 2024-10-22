@@ -130,6 +130,7 @@ export const verifyAndCreateKernelAccount = async (
     emailVerified: true,
     hasPasskey: true,
   });
+  return zeroDevAddress;
 };
 
 export const deploySmartContractAccount = async (
@@ -138,6 +139,7 @@ export const deploySmartContractAccount = async (
   // @ts-ignore
   const { subOrganizationId, walletAddress } = await getUserByEmail(email);
 
+  console.info("Deploying Account", subOrganizationId, walletAddress);
   const { kernelAddress, success, reason } = await createKernelAccountAddress(
     subOrganizationId,
     walletAddress,
@@ -147,6 +149,7 @@ export const deploySmartContractAccount = async (
     throw new Error(reason);
   }
 
+  console.info("Removing DIMO API Signer", kernelAddress);
   await removeDimoSigner(subOrganizationId, email);
 
   await upsertUser({
