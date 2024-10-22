@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { EmailAuthRequest } from "@/src/models/auth";
 import { getUserByEmail } from "@/src/services/user.service";
 import { createOrganizationAndSendEmail } from "@/src/services/wallet.service";
+import {turnkeySupportClient} from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as EmailAuthRequest;
@@ -25,6 +26,22 @@ const POST = async (request: NextRequest) => {
   const user = await getUserByEmail(email);
 
   if (user) {
+    const { emailVerified, subOrganizationId } = user;
+    if (!emailVerified) {
+      // TODO: need to move this to a service, and set the correct logoUrl
+      const response = await turnkeySupportClient.emailAuth({
+        organizationId: subOrganizationId!,
+        email: email,
+        targetPublicKey: key,
+        invalidateExisting: true
+      });
+
+      console.info("resending verification email for .", email, response);
+
+      // this is so vercel doesn't complain about not returning a response
+      return new Response(null, { status: 204 });
+    }
+
     return NextResponse.json({ error: "User already exists" }, { status: 400 });
   }
 
