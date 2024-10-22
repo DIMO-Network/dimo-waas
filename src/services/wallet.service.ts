@@ -90,6 +90,7 @@ export const createOrganizationAndSendEmail = async (
     organizationId: subOrganizationId,
     email: email,
     targetPublicKey: key,
+    invalidateExisting: true,
   });
 
   await upsertUser({
