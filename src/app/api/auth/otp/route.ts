@@ -38,7 +38,7 @@ const POST = async (request: NextRequest) => {
     },
   });
   const otpId = initResponse.otpId;
-  console.info("Sent otp request to email and otpId.", email, otpId);
+  console.info("Sent otp request to email and otpId", email, otpId);
   if (!otpId) {
     throw new Error("Expected non-null values for otpId.");
   }
