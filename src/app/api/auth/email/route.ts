@@ -12,6 +12,8 @@ const POST = async (request: NextRequest) => {
 
   const { email, redirectUrl, key, origin } = payload;
 
+  console.info("Received request to login with email bundle.", email, redirectUrl);
+
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -25,11 +27,13 @@ const POST = async (request: NextRequest) => {
   const { subOrganizationId } = user;
 
   // TODO: need to move this to a service, and set the correct logoUrl
-  await turnkeySupportClient.emailAuth({
+  const response = await turnkeySupportClient.emailAuth({
     organizationId: subOrganizationId!,
     email: email,
     targetPublicKey: key,
   });
+
+  console.info("Initiated email auth for .", email, response);
 
   // this is so vercel doesn't complain about not returning a response
   return new Response(null, { status: 204 });

@@ -9,13 +9,14 @@ import { turnkeySupportClient } from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as CodeDeliveryRequest;
+  
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
   }
 
   const { email, redirectUrl } = payload;
-
+  console.info("Received request to send otp code.", email);
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -27,7 +28,6 @@ const POST = async (request: NextRequest) => {
   }
 
   const { subOrganizationId } = user;
-
   // TODO: need to move this to a service, and set the correct logoUrl
   const initResponse = await turnkeySupportClient.initOtpAuth({
     organizationId: subOrganizationId!,
@@ -39,11 +39,12 @@ const POST = async (request: NextRequest) => {
     },
   });
   const otpId = initResponse.otpId;
+  console.info("Sent otp request to email and otpId", email, otpId);
   if (!otpId) {
     throw new Error("Expected non-null values for otpId.");
   }
 
-  return Response.json({ otpId }, { status: 204 });
+  return Response.json({ otpId }, { status: 201 });
 };
 
 const PUT = async (request: NextRequest) => {
@@ -54,6 +55,8 @@ const PUT = async (request: NextRequest) => {
   }
 
   const { email, otpId, otpCode, key } = payload;
+
+  console.info("Received request to login with otpcode.", email, otpId);
 
   const user = await getUserByEmail(email);
 
@@ -78,7 +81,7 @@ const PUT = async (request: NextRequest) => {
   });
 
   const { credentialBundle, apiKeyId, userId } = otpAuthResponse;
-
+  console.info("Returning bundle to user.", email, apiKeyId, userId);
   if (!credentialBundle || !apiKeyId || !userId) {
     throw new Error(
       "Expected non-null values for credentialBundle, apiKeyId, and userId."

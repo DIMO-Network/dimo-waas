@@ -18,6 +18,7 @@ const POST = async (request: NextRequest) => {
   }
   const { email, redirectUrl, key, origin } = payload;
 
+  console.info("Received request to initiate recovery.", payload);
   const user = await getUserByEmail(email);
 
   if (!user) {
@@ -35,6 +36,8 @@ const POST = async (request: NextRequest) => {
       magicLinkTemplate: `${redirectUrl}&token=%s`,
     },
   });
+
+  console.info("Recovery initiated.", payload);
 
   // this is so vercel doesn't complain about not returning a response
   return new Response(null, { status: 204 });
@@ -67,6 +70,7 @@ const PUT = async (request: NextRequest) => {
 
   await forwardSignedActivity(signedRecoveryRequest);
 
+  console.info("Recovery complete.", payload);
   return new Response(null, { status: 204 });
 };
 

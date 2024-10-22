@@ -12,6 +12,7 @@ const POST = async (request: NextRequest) => {
 
   const { encodedChallenge, attestation } = payload;
 
+  console.info("Received request to verify email.", payload);
   if (!encodedChallenge || !attestation) {
     return NextResponse.json(
       { error: "No challenge or attestation for authenticator provided" },
@@ -34,8 +35,9 @@ const POST = async (request: NextRequest) => {
     );
   }
 
-  await verifyAndCreateKernelAccount(payload);
+  const kernelAddress = await verifyAndCreateKernelAccount(payload);
 
+  console.info("Verified account and AA deployed.", kernelAddress);
   // this is so vercel doesn't complain about not returning a response
   return new Response(null, { status: 204 });
 };

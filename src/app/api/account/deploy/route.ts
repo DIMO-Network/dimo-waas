@@ -12,6 +12,7 @@ const POST = async (request: NextRequest) => {
 
   const { email } = payload;
 
+  console.info("Received request to deploy smart contract account.", payload);
   const user = await getUserByEmail(email);
 
   if (!user) {
