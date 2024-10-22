@@ -31,6 +31,7 @@ const POST = async (request: NextRequest) => {
     organizationId: subOrganizationId!,
     email: email,
     targetPublicKey: key,
+    invalidateExisting: true
   });
 
   console.info("Initiated email auth for .", email, response);
