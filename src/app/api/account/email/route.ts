@@ -5,7 +5,13 @@ import { createOrganizationAndSendEmail } from "@/src/services/wallet.service";
 import {turnkeySupportClient} from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
-  const payload = (await request.json()) as EmailAuthRequest;
+  let payload: EmailAuthRequest;
+
+  try {
+    payload = (await request.json()) as EmailAuthRequest;
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+  }
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
