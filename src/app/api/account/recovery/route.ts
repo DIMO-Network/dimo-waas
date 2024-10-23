@@ -11,7 +11,13 @@ import {
 } from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
-  const payload = (await request.json()) as EmailRecoveryRequest;
+  let payload: EmailRecoveryRequest;
+
+  try {
+    payload = (await request.json()) as EmailRecoveryRequest;
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+  }
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
