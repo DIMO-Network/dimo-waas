@@ -13,7 +13,8 @@ import {
   dimoApiPublicKey,
   paymasterRpc,
   stamperClient,
-  turnkeyClient, turnkeySupportClient,
+  turnkeyClient,
+  turnkeySupportClient,
 } from "@/src/clients/turnkey";
 import { createAccount } from "@turnkey/viem";
 import { Chain, createPublicClient, createWalletClient, http } from "viem";
@@ -131,7 +132,7 @@ export const verifyAndCreateKernelAccount = async (
 
   if (!credentialBundle || !apiKeyId || !userId) {
     throw new Error(
-        "Expected non-null values for credentialBundle, apiKeyId, and userId."
+      "Expected non-null values for credentialBundle, apiKeyId, and userId.",
     );
   }
 
