@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  EmailAuthRequest,
   CodeDeliveryRequest,
   CodeAuthenticationRequest,
 } from "@/src/models/auth";
@@ -9,7 +8,6 @@ import { turnkeySupportClient } from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
   const payload = (await request.json()) as CodeDeliveryRequest;
-  
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
@@ -24,7 +22,10 @@ const POST = async (request: NextRequest) => {
   }
 
   if (!user.emailVerified) {
-    return NextResponse.json({ error: "User email not verified" }, { status: 400 });
+    return NextResponse.json(
+      { error: "User email not verified" },
+      { status: 400 },
+    );
   }
 
   const { subOrganizationId } = user;
@@ -64,7 +65,10 @@ const PUT = async (request: NextRequest) => {
   }
 
   if (!user.emailVerified) {
-    return NextResponse.json({ error: "User email not verified" }, { status: 400 });
+    return NextResponse.json(
+      { error: "User email not verified" },
+      { status: 400 },
+    );
   }
 
   const { subOrganizationId } = user;
@@ -83,7 +87,7 @@ const PUT = async (request: NextRequest) => {
   console.info("Returning bundle to user.", email, apiKeyId, userId);
   if (!credentialBundle || !apiKeyId || !userId) {
     throw new Error(
-      "Expected non-null values for credentialBundle, apiKeyId, and userId."
+      "Expected non-null values for credentialBundle, apiKeyId, and userId.",
     );
   }
 
