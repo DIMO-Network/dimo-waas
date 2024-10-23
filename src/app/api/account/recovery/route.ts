@@ -16,6 +16,7 @@ const POST = async (request: NextRequest) => {
   try {
     payload = (await request.json()) as EmailRecoveryRequest;
   } catch (error) {
+    console.error("Invalid JSON payload", error);
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
 

@@ -36,17 +36,26 @@ const POST = async (request: NextRequest) => {
   }
 
   const { subOrganizationId } = user;
-  // TODO: need to move this to a service, and set the correct logoUrl
-  const initResponse = await turnkeySupportClient.initOtpAuth({
-    organizationId: subOrganizationId!,
-    otpType: "OTP_TYPE_EMAIL",
-    contact: email,
-    emailCustomization: {
-      appName: "https://dimo.org",
-      magicLinkTemplate: `${redirectUrl}&token=%s`,
-    },
-  });
-  const otpId = initResponse.otpId;
+
+  let otpId: string;
+
+  try {
+    // TODO: need to move this to a service, and set the correct logoUrl
+    const initResponse = await turnkeySupportClient.initOtpAuth({
+      organizationId: subOrganizationId!,
+      otpType: "OTP_TYPE_EMAIL",
+      contact: email,
+      emailCustomization: {
+        appName: "https://dimo.org",
+        magicLinkTemplate: `${redirectUrl}&token=%s`,
+      },
+    });
+    otpId = initResponse.otpId;
+  }catch (e){
+    console.error('Error sending OTP code.', e);
+    return NextResponse.json({ error: "Failed to send OTP code" }, { status: 400 });
+  }
+
   console.info("Sent otp request to email and otpId.", email, otpId);
   if (!otpId) {
     throw new Error("Expected non-null values for otpId.");
@@ -61,6 +70,7 @@ const PUT = async (request: NextRequest) => {
   try {
     payload = (await request.json()) as CodeAuthenticationRequest;
   } catch (error) {
+    console.error("Invalid JSON payload", error);
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
 
@@ -87,24 +97,29 @@ const PUT = async (request: NextRequest) => {
 
   const { subOrganizationId } = user;
 
-  const otpAuthResponse = await turnkeySupportClient.otpAuth({
-    organizationId: subOrganizationId!,
-    otpId: otpId,
-    otpCode: otpCode,
-    targetPublicKey: key,
-    apiKeyName: "OTP Key",
-    expirationSeconds: "900",
-    invalidateExisting: true,
-  });
+  try {
+    const otpAuthResponse = await turnkeySupportClient.otpAuth({
+      organizationId: subOrganizationId!,
+      otpId: otpId,
+      otpCode: otpCode,
+      targetPublicKey: key,
+      apiKeyName: "OTP Key",
+      expirationSeconds: "900",
+      invalidateExisting: true,
+    });
 
-  const { credentialBundle, apiKeyId, userId } = otpAuthResponse;
-  console.info("Returning bundle to user.", email, apiKeyId, userId);
-  if (!credentialBundle || !apiKeyId || !userId) {
-    throw new Error(
-      "Expected non-null values for credentialBundle, apiKeyId, and userId.",
-    );
+    const { credentialBundle, apiKeyId, userId } = otpAuthResponse;
+    console.info("Returning bundle to user.", email, apiKeyId, userId);
+    if (!credentialBundle || !apiKeyId || !userId) {
+      throw new Error(
+          "Expected non-null values for credentialBundle, apiKeyId, and userId."
+      );
+    }
+
+    return Response.json({ credentialBundle }, { status: 200 });
+  } catch (e) {
+    console.error("Error authenticating with OTP code.", e);
+    return NextResponse.json({ error: "Failed to authenticate with OTP code" }, { status: 400 });
   }
-
-  return Response.json({ credentialBundle }, { status: 200 });
 };
 export { POST, PUT };

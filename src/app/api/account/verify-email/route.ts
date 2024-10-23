@@ -9,6 +9,7 @@ const POST = async (request: NextRequest) => {
   try {
     payload = (await request.json()) as AccountCreateRequest;
   } catch (error) {
+    console.error("Invalid JSON payload", error);
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
 
@@ -41,11 +42,16 @@ const POST = async (request: NextRequest) => {
     );
   }
 
-  const kernelAddress = await verifyAndCreateKernelAccount(payload);
+  try {
+    const kernelAddress = await verifyAndCreateKernelAccount(payload);
 
-  console.info("Verified account and AA deployed.", kernelAddress);
-  // this is so vercel doesn't complain about not returning a response
-  return new Response(null, { status: 204 });
+    console.info("Verified account and AA deployed.", kernelAddress);
+    // this is so vercel doesn't complain about not returning a response
+    return new Response(null, { status: 204 });
+  } catch (e) {
+    console.error("Error verifying email.", e);
+    return NextResponse.json({ error: "Failed to verify email" }, { status: 400 });
+  }
 };
 
 export { POST };
