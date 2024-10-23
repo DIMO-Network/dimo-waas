@@ -10,7 +10,10 @@ const POST = async (request: NextRequest) => {
     payload = (await request.json()) as EmailAuthRequest;
   } catch (error) {
     console.error("Invalid JSON payload", error);
-    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 },
+    );
   }
 
   if (!payload) {
@@ -40,20 +43,23 @@ const POST = async (request: NextRequest) => {
 
   const { subOrganizationId } = user;
 
-    try {
-      // TODO: need to move this to a service, and set the correct logoUrl
-      const response = await turnkeySupportClient.emailAuth({
-        organizationId: subOrganizationId!,
-        email: email,
-        targetPublicKey: key,
-        invalidateExisting: true
-      });
+  try {
+    // TODO: need to move this to a service, and set the correct logoUrl
+    const response = await turnkeySupportClient.emailAuth({
+      organizationId: subOrganizationId!,
+      email: email,
+      targetPublicKey: key,
+      invalidateExisting: true,
+    });
 
-      console.info("Initiated email auth for .", email, response);
-    } catch (e) {
-        console.error("Error initiating email auth.", e);
-        return NextResponse.json({ error: "Failed to initiate email auth" }, { status: 400 });
-    }
+    console.info("Initiated email auth for .", email, response);
+  } catch (e) {
+    console.error("Error initiating email auth.", e);
+    return NextResponse.json(
+      { error: "Failed to initiate email auth" },
+      { status: 400 },
+    );
+  }
 
   // this is so vercel doesn't complain about not returning a response
   return new Response(null, { status: 204 });

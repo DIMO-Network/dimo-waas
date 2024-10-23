@@ -10,7 +10,10 @@ const POST = async (request: NextRequest) => {
     payload = (await request.json()) as AccountCreateRequest;
   } catch (error) {
     console.error("Invalid JSON payload", error);
-    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 },
+    );
   }
 
   if (!payload) {
@@ -50,7 +53,10 @@ const POST = async (request: NextRequest) => {
     return new Response(null, { status: 204 });
   } catch (e) {
     console.error("Error verifying email.", e);
-    return NextResponse.json({ error: "Failed to verify email" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Failed to verify email" },
+      { status: 400 },
+    );
   }
 };
 

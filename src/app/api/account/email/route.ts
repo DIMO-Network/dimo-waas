@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { EmailAuthRequest } from "@/src/models/auth";
 import { getUserByEmail } from "@/src/services/user.service";
 import { createOrganizationAndSendEmail } from "@/src/services/wallet.service";
-import {turnkeySupportClient} from "@/src/clients/turnkey";
+import { turnkeySupportClient } from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
   let payload: EmailAuthRequest;
@@ -11,7 +11,10 @@ const POST = async (request: NextRequest) => {
     payload = (await request.json()) as EmailAuthRequest;
   } catch (error) {
     console.error("Invalid JSON payload", error);
-    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 },
+    );
   }
 
   if (!payload) {
@@ -36,22 +39,25 @@ const POST = async (request: NextRequest) => {
     const { emailVerified, subOrganizationId } = user;
     if (!emailVerified) {
       // TODO: need to move this to a service, and set the correct logoUrl
-     try {
-       const response = await turnkeySupportClient.emailAuth({
-         organizationId: subOrganizationId!,
-         email: email,
-         targetPublicKey: key,
-         invalidateExisting: true
-       });
+      try {
+        const response = await turnkeySupportClient.emailAuth({
+          organizationId: subOrganizationId!,
+          email: email,
+          targetPublicKey: key,
+          invalidateExisting: true,
+        });
 
-       console.info("resending verification email for .", email, response);
+        console.info("resending verification email for .", email, response);
 
-       // this is so vercel doesn't complain about not returning a response
-       return new Response(null, { status: 204 });
-     } catch (e) {
-         console.error("Error resending verification email.", e);
-         return NextResponse.json({ error: "Failed to resend verification email" }, { status: 400 });
-     }
+        // this is so vercel doesn't complain about not returning a response
+        return new Response(null, { status: 204 });
+      } catch (e) {
+        console.error("Error resending verification email.", e);
+        return NextResponse.json(
+          { error: "Failed to resend verification email" },
+          { status: 400 },
+        );
+      }
     }
 
     return NextResponse.json({ error: "User already exists" }, { status: 400 });

@@ -13,7 +13,11 @@ const POST = async (request: NextRequest) => {
   try {
     payload = (await request.json()) as CodeDeliveryRequest;
   } catch (error) {
-    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    console.error("Invalid JSON payload", error);
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 },
+    );
   }
 
   if (!payload) {
@@ -51,9 +55,12 @@ const POST = async (request: NextRequest) => {
       },
     });
     otpId = initResponse.otpId;
-  }catch (e){
-    console.error('Error sending OTP code.', e);
-    return NextResponse.json({ error: "Failed to send OTP code" }, { status: 400 });
+  } catch (e) {
+    console.error("Error sending OTP code.", e);
+    return NextResponse.json(
+      { error: "Failed to send OTP code" },
+      { status: 400 },
+    );
   }
 
   console.info("Sent otp request to email and otpId.", email, otpId);
@@ -71,7 +78,10 @@ const PUT = async (request: NextRequest) => {
     payload = (await request.json()) as CodeAuthenticationRequest;
   } catch (error) {
     console.error("Invalid JSON payload", error);
-    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 },
+    );
   }
 
   if (!payload) {
@@ -112,14 +122,17 @@ const PUT = async (request: NextRequest) => {
     console.info("Returning bundle to user.", email, apiKeyId, userId);
     if (!credentialBundle || !apiKeyId || !userId) {
       throw new Error(
-          "Expected non-null values for credentialBundle, apiKeyId, and userId."
+        "Expected non-null values for credentialBundle, apiKeyId, and userId.",
       );
     }
 
     return Response.json({ credentialBundle }, { status: 200 });
   } catch (e) {
     console.error("Error authenticating with OTP code.", e);
-    return NextResponse.json({ error: "Failed to authenticate with OTP code" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Failed to authenticate with OTP code" },
+      { status: 400 },
+    );
   }
 };
 export { POST, PUT };
