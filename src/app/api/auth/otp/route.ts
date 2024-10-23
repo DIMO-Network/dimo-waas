@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  EmailAuthRequest,
   CodeDeliveryRequest,
   CodeAuthenticationRequest,
 } from "@/src/models/auth";
 import { getUserByEmail } from "@/src/services/user.service";
-import { turnkeySupportClient } from "@/src/clients/turnkey";
+import {
+  forwardSignedActivity,
+  supportStamperClient,
+} from "@/src/clients/turnkey";
+
+import {InitOtpAuthResponse, OtpAuthResponse, RootError} from "@/src/models/activity-response";
 
 const POST = async (request: NextRequest) => {
   let payload: CodeDeliveryRequest;
@@ -45,16 +49,32 @@ const POST = async (request: NextRequest) => {
 
   try {
     // TODO: need to move this to a service, and set the correct logoUrl
-    const initResponse = await turnkeySupportClient.initOtpAuth({
-      organizationId: subOrganizationId!,
-      otpType: "OTP_TYPE_EMAIL",
-      contact: email,
-      emailCustomization: {
-        appName: "https://dimo.org",
-        magicLinkTemplate: `${redirectUrl}&token=%s`,
-      },
-    });
-    otpId = initResponse.otpId;
+    const stamped = await supportStamperClient.stampInitOtpAuth({
+        type: "ACTIVITY_TYPE_INIT_OTP_AUTH",
+        organizationId: subOrganizationId!,
+        timestampMs: Date.now().toString(),
+        parameters: {
+          otpType: "OTP_TYPE_EMAIL",
+          contact: email,
+          emailCustomization: {
+            appName: "DIMO",
+          },
+        }
+      });
+
+    const response = await forwardSignedActivity(stamped);
+
+    if (!response.success) {
+      const error = response.response as RootError;
+      return NextResponse.json(
+          { error: error.message },
+          { status: 400 },
+      );
+    }
+
+    const { activity } = response.response as InitOtpAuthResponse;
+
+    otpId = activity.result.initOtpAuthResult.otpId;
   } catch (e) {
     console.error("Error sending OTP code.", e);
     return NextResponse.json(
@@ -105,30 +125,44 @@ const PUT = async (request: NextRequest) => {
     );
   }
 
-  const { subOrganizationId } = user;
-
   try {
-    const otpAuthResponse = await turnkeySupportClient.otpAuth({
+    const { subOrganizationId } = user;
+    const stamped = await supportStamperClient.stampOtpAuth({
+      type: "ACTIVITY_TYPE_OTP_AUTH",
+      timestampMs: Date.now().toString(),
       organizationId: subOrganizationId!,
-      otpId: otpId,
-      otpCode: otpCode,
-      targetPublicKey: key,
-      apiKeyName: "OTP Key",
-      expirationSeconds: "900",
-      invalidateExisting: true,
+      parameters: {
+        otpId: otpId,
+        otpCode: otpCode,
+        targetPublicKey: key,
+        apiKeyName: "OTP Key",
+        expirationSeconds: "900",
+        invalidateExisting: true,
+      },
     });
 
-    const { credentialBundle, apiKeyId, userId } = otpAuthResponse;
-    console.info("Returning bundle to user.", email, apiKeyId, userId);
+    const result = await forwardSignedActivity(stamped);
+
+    if (!result.success) {
+      const error = result.response as RootError;
+      return NextResponse.json(
+          { error: error.message },
+          { status: 400 },
+      );
+    }
+
+    const { activity } = result.response as OtpAuthResponse;
+
+    const { credentialBundle, apiKeyId, userId } = activity.result.otpAuthResult;
+
     if (!credentialBundle || !apiKeyId || !userId) {
       throw new Error(
-        "Expected non-null values for credentialBundle, apiKeyId, and userId.",
+          "Expected non-null values for credentialBundle, apiKeyId, and userId.",
       );
     }
 
     return Response.json({ credentialBundle }, { status: 200 });
   } catch (e) {
-    console.error("Error authenticating with OTP code.", e);
     return NextResponse.json(
       { error: "Failed to authenticate with OTP code" },
       { status: 400 },

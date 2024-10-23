@@ -24,6 +24,26 @@ export interface CreateUsersActivityResponse {
   };
 }
 
+export interface InitOtpAuthResponse {
+    activity: {
+        result: {
+          initOtpAuthResult: TurnkeySDKApiTypes.TInitOtpAuthResponse;
+        };
+    };
+}
+
+export interface OtpAuthResponse {
+    activity: {
+        result: {
+        otpAuthResult: TurnkeySDKApiTypes.TOtpAuthResponse;
+        };
+    };
+}
+
+export interface RootError {
+    message: string;
+}
+
 export interface SubOrganizationRootUser {
   userName: string;
   userEmail?: string;

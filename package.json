@@ -16,7 +16,7 @@
     "@sentry/nextjs": "^8.33.1",
     "@turnkey/http": "^2.14.2",
     "@turnkey/sdk-server": "^1.5.0",
-    "@turnkey/viem": "^0.6.1",
+    "@turnkey/viem": "^0.6.2",
     "@zerodev/ecdsa-validator": "^5.3.3",
     "@zerodev/sdk": "^5.3.20",
     "next": "^14.2.14",
