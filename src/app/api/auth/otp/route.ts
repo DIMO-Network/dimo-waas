@@ -8,8 +8,13 @@ import { getUserByEmail } from "@/src/services/user.service";
 import { turnkeySupportClient } from "@/src/clients/turnkey";
 
 const POST = async (request: NextRequest) => {
-  const payload = (await request.json()) as CodeDeliveryRequest;
-  
+  let payload: CodeDeliveryRequest;
+
+  try {
+    payload = (await request.json()) as CodeDeliveryRequest;
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+  }
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
@@ -48,7 +53,13 @@ const POST = async (request: NextRequest) => {
 };
 
 const PUT = async (request: NextRequest) => {
-  const payload = (await request.json()) as CodeAuthenticationRequest;
+  let payload: CodeAuthenticationRequest;
+
+  try {
+    payload = (await request.json()) as CodeAuthenticationRequest;
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+  }
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });

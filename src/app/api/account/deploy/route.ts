@@ -4,7 +4,13 @@ import { getUserByEmail } from "@/src/services/user.service";
 import { deploySmartContractAccount } from "@/src/services/wallet.service";
 
 const POST = async (request: NextRequest) => {
-  const payload = (await request.json()) as UserRegisteredRequest;
+  let payload: UserRegisteredRequest;
+
+  try {
+    payload = (await request.json()) as UserRegisteredRequest;
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+  }
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
