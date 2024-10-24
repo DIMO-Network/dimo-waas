@@ -9,6 +9,7 @@ import {
   stamperClient,
   turnkeySupportClient,
 } from "@/src/clients/turnkey";
+import { RootError } from "@/src/models/activity-response";
 
 const POST = async (request: NextRequest) => {
   let payload: EmailRecoveryRequest;
@@ -54,7 +55,16 @@ const POST = async (request: NextRequest) => {
 };
 
 const PUT = async (request: NextRequest) => {
-  const payload = (await request.json()) as PasskeyRecoveryRequest;
+  let payload: PasskeyRecoveryRequest;
+  try {
+    payload = (await request.json()) as PasskeyRecoveryRequest;
+  } catch (error) {
+    console.error("Invalid JSON payload", error);
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 },
+    );
+  }
 
   if (!payload) {
     return NextResponse.json({ error: "No payload provided" }, { status: 400 });
@@ -76,9 +86,21 @@ const PUT = async (request: NextRequest) => {
     );
   }
 
-  await forwardSignedActivity(signedAuthenticatorRemoval);
+  const authenticatorResponse = await forwardSignedActivity(
+    signedAuthenticatorRemoval,
+  );
 
-  await forwardSignedActivity(signedRecoveryRequest);
+  if (!authenticatorResponse.success) {
+    const error = authenticatorResponse.response as RootError;
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  const recoveryResponse = await forwardSignedActivity(signedRecoveryRequest);
+
+  if (!recoveryResponse.success) {
+    const error = recoveryResponse.response as RootError;
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
 
   console.info("Recovery complete.", payload);
   return new Response(null, { status: 204 });

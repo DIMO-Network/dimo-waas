@@ -99,7 +99,9 @@ export const forwardSignedActivity = async (
           response: responseBody,
         };
       case ActivityStatus.FAILED:
-        console.error(`Forwarded activity failed after ${attempt} attempts with status ${status} and response body ${JSON.stringify(responseBody)}`);
+        console.error(
+          `Forwarded activity failed after ${attempt} attempts with status ${status} and response body ${JSON.stringify(responseBody)}`,
+        );
         return {
           success: false,
           response: responseBody,
@@ -117,7 +119,9 @@ export const forwardSignedActivity = async (
           response: responseBody,
         };
       default:
-        console.info(`Activity ${activity.id} is in an unknown state with response body ${JSON.stringify(responseBody)}`);
+        console.info(
+          `Activity ${activity.id} is in an unknown state with response body ${JSON.stringify(responseBody)}`,
+        );
         return {
           success: false,
           response: null,

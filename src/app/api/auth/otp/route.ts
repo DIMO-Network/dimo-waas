@@ -9,7 +9,11 @@ import {
   supportStamperClient,
 } from "@/src/clients/turnkey";
 
-import {InitOtpAuthResponse, OtpAuthResponse, RootError} from "@/src/models/activity-response";
+import {
+  InitOtpAuthResponse,
+  OtpAuthResponse,
+  RootError,
+} from "@/src/models/activity-response";
 
 const POST = async (request: NextRequest) => {
   let payload: CodeDeliveryRequest;
@@ -50,26 +54,23 @@ const POST = async (request: NextRequest) => {
   try {
     // TODO: need to move this to a service, and set the correct logoUrl
     const stamped = await supportStamperClient.stampInitOtpAuth({
-        type: "ACTIVITY_TYPE_INIT_OTP_AUTH",
-        organizationId: subOrganizationId!,
-        timestampMs: Date.now().toString(),
-        parameters: {
-          otpType: "OTP_TYPE_EMAIL",
-          contact: email,
-          emailCustomization: {
-            appName: "DIMO",
-          },
-        }
-      });
+      type: "ACTIVITY_TYPE_INIT_OTP_AUTH",
+      organizationId: subOrganizationId!,
+      timestampMs: Date.now().toString(),
+      parameters: {
+        otpType: "OTP_TYPE_EMAIL",
+        contact: email,
+        emailCustomization: {
+          appName: "DIMO",
+        },
+      },
+    });
 
     const response = await forwardSignedActivity(stamped);
 
     if (!response.success) {
       const error = response.response as RootError;
-      return NextResponse.json(
-          { error: error.message },
-          { status: 400 },
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     const { activity } = response.response as InitOtpAuthResponse;
@@ -145,19 +146,17 @@ const PUT = async (request: NextRequest) => {
 
     if (!result.success) {
       const error = result.response as RootError;
-      return NextResponse.json(
-          { error: error.message },
-          { status: 400 },
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     const { activity } = result.response as OtpAuthResponse;
 
-    const { credentialBundle, apiKeyId, userId } = activity.result.otpAuthResult;
+    const { credentialBundle, apiKeyId, userId } =
+      activity.result.otpAuthResult;
 
     if (!credentialBundle || !apiKeyId || !userId) {
       throw new Error(
-          "Expected non-null values for credentialBundle, apiKeyId, and userId.",
+        "Expected non-null values for credentialBundle, apiKeyId, and userId.",
       );
     }
 

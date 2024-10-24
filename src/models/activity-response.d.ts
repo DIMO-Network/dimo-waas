@@ -25,23 +25,23 @@ export interface CreateUsersActivityResponse {
 }
 
 export interface InitOtpAuthResponse {
-    activity: {
-        result: {
-          initOtpAuthResult: TurnkeySDKApiTypes.TInitOtpAuthResponse;
-        };
+  activity: {
+    result: {
+      initOtpAuthResult: TurnkeySDKApiTypes.TInitOtpAuthResponse;
     };
+  };
 }
 
 export interface OtpAuthResponse {
-    activity: {
-        result: {
-        otpAuthResult: TurnkeySDKApiTypes.TOtpAuthResponse;
-        };
+  activity: {
+    result: {
+      otpAuthResult: TurnkeySDKApiTypes.TOtpAuthResponse;
     };
+  };
 }
 
 export interface RootError {
-    message: string;
+  message: string;
 }
 
 export interface SubOrganizationRootUser {
