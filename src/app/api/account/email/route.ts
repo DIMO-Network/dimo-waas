@@ -69,6 +69,7 @@ const POST = async (request: NextRequest) => {
         if (!otpId) {
           throw new Error("Expected non-null values for otpId.");
         }
+        return NextResponse.json({ otpId }, { status: 201 });
       } catch (e) {
         console.error("Error resending verification email.", e);
         return NextResponse.json(
