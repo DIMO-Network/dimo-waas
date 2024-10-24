@@ -9,7 +9,11 @@ const POST = async (request: NextRequest) => {
   try {
     payload = (await request.json()) as AccountCreateRequest;
   } catch (error) {
-    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    console.error("Invalid JSON payload", error);
+    return NextResponse.json(
+      { error: "Invalid JSON payload" },
+      { status: 400 },
+    );
   }
 
   if (!payload) {

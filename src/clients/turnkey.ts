@@ -3,7 +3,7 @@ import {
   TurnkeySDKApiTypes,
   TurnkeyServerClient,
 } from "@turnkey/sdk-server";
-import { TurnkeyClient } from "@turnkey/http";
+import { createActivityPoller, TurnkeyClient } from "@turnkey/http";
 import { IStampedRequest, TurnkeyStamp } from "@/src/models/auth";
 
 const {
@@ -35,14 +35,23 @@ export const stamperClient = new TurnkeyClient(
   apiKeyStamper,
 );
 
+const supportApiKeyStamper = new ApiKeyStamper({
+  apiPublicKey: TURNKEY_SUPPORT_API_PUBLIC_KEY!,
+  apiPrivateKey: TURNKEY_SUPPORT_API_PRIVATE_KEY!,
+});
+
 export const turnkeySupportClient = new TurnkeyServerClient({
   apiBaseUrl: TURNKEY_API_BASE_URL!,
   organizationId: TURNKEY_ORGANIZATION_ID!,
-  stamper: new ApiKeyStamper({
-    apiPublicKey: TURNKEY_SUPPORT_API_PUBLIC_KEY!,
-    apiPrivateKey: TURNKEY_SUPPORT_API_PRIVATE_KEY!,
-  }),
+  stamper: supportApiKeyStamper,
 });
+
+export const supportStamperClient = new TurnkeyClient(
+  {
+    baseUrl: TURNKEY_API_BASE_URL!,
+  },
+  supportApiKeyStamper,
+);
 
 export const bundleRpc = BUNDLER_RPC!;
 export const paymasterRpc = PAYMASTER_RPC!;
@@ -50,7 +59,7 @@ export const dimoApiPublicKey = TURNKEY_API_PUBLIC_KEY!;
 
 export const forwardSignedActivity = async (
   stampedRequest: IStampedRequest,
-) => {
+): Promise<{ success: boolean; response: unknown }> => {
   const delay = 1000;
   const maxAttempts = 5;
 
@@ -66,12 +75,15 @@ export const forwardSignedActivity = async (
     );
 
     console.info(
-      `Forwarded activity attempt ${attempt + 1} with status ${status}`,
+      `Forwarded activity attempt ${attempt + 1} with status ${status} and response body ${JSON.stringify(responseBody)}`,
     );
-    console.info("And response body", responseBody);
 
     if (status !== 200) {
-      throw new Error(`Failed to forward signed request: ${status}`);
+      console.error(`Forwarded activity failed with status ${status}`);
+      return {
+        success: false,
+        response: responseBody,
+      };
     }
 
     const { activity } = responseBody;
@@ -82,22 +94,44 @@ export const forwardSignedActivity = async (
         continue;
       case ActivityStatus.COMPLETED:
         console.info(`Activity ${activity.id} is ${activity.status}`);
-        return responseBody;
+        return {
+          success: true,
+          response: responseBody,
+        };
       case ActivityStatus.FAILED:
-        throw new Error(`Forwarded activity failed after ${attempt} attempts`);
+        console.error(
+          `Forwarded activity failed after ${attempt} attempts with status ${status} and response body ${JSON.stringify(responseBody)}`,
+        );
+        return {
+          success: false,
+          response: responseBody,
+        };
       case ActivityStatus.CONSENSUS_NEEDED:
-        throw new Error(
-          `Forwarded activity needs consensus after ${attempt} attempts`,
-        );
+        console.warn("Activity needs consensus");
+        return {
+          success: false,
+          response: responseBody,
+        };
       case ActivityStatus.REJECTED:
-        throw new Error(
-          `Forwarded activity was rejected after ${attempt} attempts`,
-        );
+        console.error("Activity was rejected");
+        return {
+          success: false,
+          response: responseBody,
+        };
       default:
-        console.info(`Activity ${activity.id} is in an unknown state`);
-        break;
+        console.info(
+          `Activity ${activity.id} is in an unknown state with response body ${JSON.stringify(responseBody)}`,
+        );
+        return {
+          success: false,
+          response: null,
+        };
     }
   }
+  return {
+    success: false,
+    response: null,
+  };
 };
 
 // private function
