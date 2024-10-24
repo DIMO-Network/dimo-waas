@@ -122,31 +122,30 @@ export const verifyAndCreateKernelAccount = async (
   const { subOrganizationId, walletAddress, smartContractAddress } =
     await getUserByEmail(email);
 
-    const stamped = await supportStamperClient.stampOtpAuth({
-      type: "ACTIVITY_TYPE_OTP_AUTH",
-      timestampMs: Date.now().toString(),
-      organizationId: subOrganizationId!,
-      parameters: {
-        otpId: otpId!,
-        otpCode: otpCode!,
-        targetPublicKey: key,
-        apiKeyName: "OTP Key",
-        expirationSeconds: "900",
-        invalidateExisting: true,
-      },
-    });
+  const stamped = await supportStamperClient.stampOtpAuth({
+    type: "ACTIVITY_TYPE_OTP_AUTH",
+    timestampMs: Date.now().toString(),
+    organizationId: subOrganizationId!,
+    parameters: {
+      otpId: otpId!,
+      otpCode: otpCode!,
+      targetPublicKey: key,
+      apiKeyName: "OTP Key",
+      expirationSeconds: "900",
+      invalidateExisting: true,
+    },
+  });
 
-    const result = await forwardSignedActivity(stamped);
+  const result = await forwardSignedActivity(stamped);
 
-    if (!result.success) {
-      const error = result.response as RootError;
-      throw new Error(error.message);
-    }
+  if (!result.success) {
+    const error = result.response as RootError;
+    throw new Error(error.message);
+  }
 
-    const { activity } = result.response as OtpAuthResponse;
+  const { activity } = result.response as OtpAuthResponse;
 
-    const { credentialBundle, apiKeyId, userId } =
-      activity.result.otpAuthResult;
+  const { credentialBundle, apiKeyId, userId } = activity.result.otpAuthResult;
 
   if (!credentialBundle || !apiKeyId || !userId) {
     throw new Error(

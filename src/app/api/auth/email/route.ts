@@ -43,15 +43,6 @@ const POST = async (request: NextRequest) => {
 
   const { subOrganizationId } = user;
 
-<<<<<<< HEAD
-  // TODO: need to move this to a service, and set the correct logoUrl
-  const response = await turnkeySupportClient.emailAuth({
-    organizationId: subOrganizationId!,
-    email: email,
-    targetPublicKey: key,
-    invalidateExisting: true
-  });
-=======
   try {
     // TODO: need to move this to a service, and set the correct logoUrl
     const response = await turnkeySupportClient.emailAuth({
@@ -60,7 +51,6 @@ const POST = async (request: NextRequest) => {
       targetPublicKey: key,
       invalidateExisting: true,
     });
->>>>>>> staging
 
     console.info("Initiated email auth for .", email, response);
   } catch (e) {

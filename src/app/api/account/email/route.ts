@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { EmailAuthRequest } from "@/src/models/auth";
 import { getUserByEmail } from "@/src/services/user.service";
 import { createOrganizationAndSendEmail } from "@/src/services/wallet.service";
-import { forwardSignedActivity, supportStamperClient, turnkeySupportClient } from "@/src/clients/turnkey";
+import {
+  forwardSignedActivity,
+  supportStamperClient,
+  turnkeySupportClient,
+} from "@/src/clients/turnkey";
 import { InitOtpAuthResponse, RootError } from "@/src/models/activity-response";
 
 const POST = async (request: NextRequest) => {
@@ -53,14 +57,14 @@ const POST = async (request: NextRequest) => {
             },
           },
         });
-    
+
         const response = await forwardSignedActivity(stamped);
 
         if (!response.success) {
           const error = response.response as RootError;
           return NextResponse.json({ error: error.message }, { status: 400 });
         }
-    
+
         const { activity } = response.response as InitOtpAuthResponse;
 
         const otpId = activity.result.initOtpAuthResult.otpId;
