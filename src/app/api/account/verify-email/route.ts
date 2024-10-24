@@ -52,9 +52,10 @@ const POST = async (request: NextRequest) => {
     // this is so vercel doesn't complain about not returning a response
     return new Response(null, { status: 204 });
   } catch (e) {
+    const error = e as Error;
     console.error("Error verifying email.", e);
     return NextResponse.json(
-      { error: "Failed to verify email" },
+      { error: error.message },
       { status: 400 },
     );
   }
