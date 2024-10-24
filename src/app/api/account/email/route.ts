@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { EmailAuthRequest } from "@/src/models/auth";
 import { getUserByEmail } from "@/src/services/user.service";
 import { createOrganizationAndSendEmail } from "@/src/services/wallet.service";
-import { turnkeySupportClient } from "@/src/clients/turnkey";
+import { forwardSignedActivity, supportStamperClient, turnkeySupportClient } from "@/src/clients/turnkey";
+import { InitOtpAuthResponse, RootError } from "@/src/models/activity-response";
 
 const POST = async (request: NextRequest) => {
   let payload: EmailAuthRequest;
@@ -40,17 +41,34 @@ const POST = async (request: NextRequest) => {
     if (!emailVerified) {
       // TODO: need to move this to a service, and set the correct logoUrl
       try {
-        const response = await turnkeySupportClient.emailAuth({
+        const stamped = await supportStamperClient.stampInitOtpAuth({
+          type: "ACTIVITY_TYPE_INIT_OTP_AUTH",
           organizationId: subOrganizationId!,
-          email: email,
-          targetPublicKey: key,
-          invalidateExisting: true,
+          timestampMs: Date.now().toString(),
+          parameters: {
+            otpType: "OTP_TYPE_EMAIL",
+            contact: email,
+            emailCustomization: {
+              appName: "DIMO",
+            },
+          },
         });
+    
+        const response = await forwardSignedActivity(stamped);
 
-        console.info("resending verification email for .", email, response);
+        if (!response.success) {
+          const error = response.response as RootError;
+          return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+    
+        const { activity } = response.response as InitOtpAuthResponse;
 
-        // this is so vercel doesn't complain about not returning a response
-        return new Response(null, { status: 204 });
+        const otpId = activity.result.initOtpAuthResult.otpId;
+
+        console.info("resending otp request to email and otpId.", email, otpId);
+        if (!otpId) {
+          throw new Error("Expected non-null values for otpId.");
+        }
       } catch (e) {
         console.error("Error resending verification email.", e);
         return NextResponse.json(
