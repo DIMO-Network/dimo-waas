@@ -6,7 +6,7 @@ const GET = async (
   _: NextRequest,
   { params }: { params: UserRegisteredRequest },
 ) => {
-  const { email } = params;
+  const { email } = await params;
 
   if (!email) {
     return NextResponse.json({ error: "No email provided" }, { status: 400 });
