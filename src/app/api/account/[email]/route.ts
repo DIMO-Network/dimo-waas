@@ -4,7 +4,7 @@ import { getUserByEmail } from "@/src/services/user.service";
 
 const GET = async (
   _: NextRequest,
-  { params }: { params: UserRegisteredRequest },
+  { params }: { params: Promise<UserRegisteredRequest> },
 ) => {
   const { email } = await params;
 
