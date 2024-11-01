@@ -15,6 +15,7 @@ const {
   TURNKEY_API_BASE_URL,
   BUNDLER_RPC,
   PAYMASTER_RPC,
+  RPC_URL,
 } = process.env;
 
 const apiKeyStamper = new ApiKeyStamper({
@@ -55,6 +56,7 @@ export const supportStamperClient = new TurnkeyClient(
 
 export const bundleRpc = BUNDLER_RPC!;
 export const paymasterRpc = PAYMASTER_RPC!;
+export const rpcUrl = RPC_URL!;
 export const dimoApiPublicKey = TURNKEY_API_PUBLIC_KEY!;
 
 export const forwardSignedActivity = async (

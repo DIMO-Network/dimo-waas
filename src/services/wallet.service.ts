@@ -14,7 +14,7 @@ import {
   bundleRpc,
   dimoApiPublicKey,
   forwardSignedActivity,
-  paymasterRpc,
+  paymasterRpc, rpcUrl,
   stamperClient,
   supportStamperClient,
   turnkeyClient,
@@ -320,7 +320,7 @@ const createKernelAccountAddress = async (
   const smartAccountClient = createWalletClient({
     account: localAccount,
     chain: chain,
-    transport: http(bundleRpc),
+    transport: http(rpcUrl),
   });
 
   const smartAccountSigner =
@@ -328,7 +328,7 @@ const createKernelAccountAddress = async (
 
   const publicClient = createPublicClient({
     chain: chain,
-    transport: http(bundleRpc),
+    transport: http(rpcUrl),
   });
 
   const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
