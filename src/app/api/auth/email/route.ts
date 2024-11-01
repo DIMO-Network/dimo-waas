@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { EmailAuthRequest } from "@/src/models/auth";
 import { getUserByEmail } from "@/src/services/user.service";
-import { turnkeySupportClient } from "@/src/clients/turnkey";
+import {
+  forwardSignedActivity,
+  supportStamperClient,
+  turnkeySupportClient,
+} from "@/src/clients/turnkey";
+import { RootError } from "@/src/models/activity-response";
 
 const POST = async (request: NextRequest) => {
   let payload: EmailAuthRequest;
@@ -44,15 +49,26 @@ const POST = async (request: NextRequest) => {
   const { subOrganizationId } = user;
 
   try {
+    console.info("Initiated email auth for .", email);
     // TODO: need to move this to a service, and set the correct logoUrl
-    const response = await turnkeySupportClient.emailAuth({
+    const signedRequest = await supportStamperClient.stampEmailAuth({
+      type: "ACTIVITY_TYPE_EMAIL_AUTH_V2",
       organizationId: subOrganizationId!,
-      email: email,
-      targetPublicKey: key,
-      invalidateExisting: true,
+      timestampMs: Date.now().toString(),
+      parameters: {
+        email: email,
+        targetPublicKey: key,
+        invalidateExisting: true,
+      },
     });
 
-    console.info("Initiated email auth for .", email, response);
+    const response = await forwardSignedActivity(signedRequest);
+
+    if (!response.success) {
+      const error = response.response as RootError;
+      console.error("Error initiating email auth.", error.message);
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
   } catch (e) {
     console.error("Error initiating email auth.", e);
     return NextResponse.json(

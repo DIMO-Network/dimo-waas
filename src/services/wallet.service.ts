@@ -37,6 +37,7 @@ import {
 } from "@zerodev/sdk";
 import { getUserByEmail, upsertUser } from "@/src/services/user.service";
 import { EmailAuthRequest } from "@/src/models/auth";
+import { unstable_after as after } from "next/server";
 
 // Public functions
 export const createOnChainAccount = async (
@@ -86,7 +87,7 @@ export const createOnChainAccount = async (
 export const createOrganizationAndSendEmail = async (
   payload: EmailAuthRequest,
 ): Promise<string> => {
-  const { email, key, origin } = payload;
+  const { email, origin, deployAccount } = payload;
 
   const { subOrganizationId, walletAddress } =
     await createSubOrganization(email);
@@ -110,6 +111,23 @@ export const createOrganizationAndSendEmail = async (
     walletAddress: walletAddress,
   });
 
+  if (deployAccount) {
+    // this schedules the execution of kernel account creation after the email is sent
+    after(async () => {
+      const { kernelAddress, success, reason } =
+        await createKernelAccountAddress(subOrganizationId, walletAddress);
+
+      if (!success) {
+        throw new Error(reason);
+      }
+
+      await upsertUser({
+        email: payload.email,
+        smartContractAddress: kernelAddress,
+      });
+    });
+  }
+
   return otpId;
 };
 
@@ -122,31 +140,30 @@ export const verifyAndCreateKernelAccount = async (
   const { subOrganizationId, walletAddress, smartContractAddress } =
     await getUserByEmail(email);
 
-    const stamped = await supportStamperClient.stampOtpAuth({
-      type: "ACTIVITY_TYPE_OTP_AUTH",
-      timestampMs: Date.now().toString(),
-      organizationId: subOrganizationId!,
-      parameters: {
-        otpId: otpId!,
-        otpCode: otpCode!,
-        targetPublicKey: key,
-        apiKeyName: "OTP Key",
-        expirationSeconds: "900",
-        invalidateExisting: true,
-      },
-    });
+  const stamped = await supportStamperClient.stampOtpAuth({
+    type: "ACTIVITY_TYPE_OTP_AUTH",
+    timestampMs: Date.now().toString(),
+    organizationId: subOrganizationId!,
+    parameters: {
+      otpId: otpId!,
+      otpCode: otpCode!,
+      targetPublicKey: key,
+      apiKeyName: "OTP Key",
+      expirationSeconds: "900",
+      invalidateExisting: true,
+    },
+  });
 
-    const result = await forwardSignedActivity(stamped);
+  const result = await forwardSignedActivity(stamped);
 
-    if (!result.success) {
-      const error = result.response as RootError;
-      throw new Error(error.message);
-    }
+  if (!result.success) {
+    const error = result.response as RootError;
+    throw new Error(error.message);
+  }
 
-    const { activity } = result.response as OtpAuthResponse;
+  const { activity } = result.response as OtpAuthResponse;
 
-    const { credentialBundle, apiKeyId, userId } =
-      activity.result.otpAuthResult;
+  const { credentialBundle, apiKeyId, userId } = activity.result.otpAuthResult;
 
   if (!credentialBundle || !apiKeyId || !userId) {
     throw new Error(
@@ -156,6 +173,7 @@ export const verifyAndCreateKernelAccount = async (
 
   await createAuthenticator(payload, subOrganizationId);
 
+  // Kernel account is deployed if deployment is requested and it hasn't been deployed yet
   let zeroDevAddress: string | null = null;
   if (deployAccount && !smartContractAddress) {
     const { kernelAddress, success, reason } = await createKernelAccountAddress(
@@ -167,6 +185,8 @@ export const verifyAndCreateKernelAccount = async (
       throw new Error(reason);
     }
     zeroDevAddress = kernelAddress;
+
+    // since passkey is already in place and kernel account is deployed, we can remove the DIMO signer
     await removeDimoSigner(subOrganizationId, email);
   }
 
@@ -176,6 +196,7 @@ export const verifyAndCreateKernelAccount = async (
     emailVerified: true,
     hasPasskey: true,
   });
+
   return zeroDevAddress;
 };
 

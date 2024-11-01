@@ -54,10 +54,7 @@ const POST = async (request: NextRequest) => {
   } catch (e) {
     const error = e as Error;
     console.error("Error verifying email.", e);
-    return NextResponse.json(
-      { error: error.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 };
 
